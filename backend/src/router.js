@@ -3,7 +3,7 @@ const tasksController = require('./models/tasksController');
 const router = express.Router();
 
 /** ROTAS PARA CLIENTES */
-router.post('/clientes', tasksController.cadastrarClientes); // post = criar algo
+router.post('/clientes', tasksController.cadastrarCliente); // post = criar algo
 router.get('/clientes/:cpf', tasksController.buscarClienteCpf); // get = pegar algo
 router.put('/clientes/:id', tasksController.atualizarCliente); //put = atualizar algo
 router.get('/clientes/status/:id', tasksController.statusCliente);
