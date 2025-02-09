@@ -143,6 +143,206 @@ const listarPet = async ()=>{
     return query;
 };
 
+/** TABELA VACINAS */
+
+const cadastrarVacina = async (id_pet, nome, veterinario, data, lote, px_dose) => {
+    try {
+        const query = await connection.execute(
+            'INSERT INTO vacinas (id_pet, nome, veterinario, data, lote, px_dose) VALUES (?, ?, ?, ?, ?, ?);',
+            [id_pet, nome, veterinario, data, lote, px_dose]
+        );
+        return query;
+    } catch (error) {
+        console.error('Erro ao cadastrar vacina:', error);
+        throw new Error('Falha ao cadastrar vacina');
+    }
+};
+
+const buscarVacinaId = async (id) => {
+    try {
+        const query = await connection.execute(
+            'SELECT * FROM vacinas WHERE id = ?;',
+            [id]
+        );
+        return query;
+    } catch (error) {
+        console.error('Erro ao buscar vacina:', error);
+        throw new Error('Falha ao buscar vacina');
+    }
+};
+
+const listarVacinasPet = async (id_pet) => {
+    try {
+        const query = await connection.execute(
+            'SELECT * FROM vacinas WHERE id_pet = ?;',
+            [id_pet]
+        );
+        return query;
+    } catch (error) {
+        console.error('Erro ao listar vacinas do pet:', error);
+        throw new Error('Falha ao listar vacinas');
+    }
+};
+
+const atualizarVacina = async (id, id_pet, nome, veterinario, data, lote, px_dose) => {
+    try {
+        const query = await connection.execute(
+            'UPDATE vacinas SET id_pet = ?, nome = ?, veterinario = ?, data = ?, lote = ?, px_dose = ? WHERE id = ?;',
+            [id_pet, nome, veterinario, data, lote, px_dose, id]
+        );
+        return query;
+    } catch (error) {
+        console.error('Erro ao atualizar vacina:', error);
+        throw new Error('Falha ao atualizar vacina');
+    }
+};
+
+const listarVacinas = async () => {
+    try {
+        const query = await connection.execute(
+            'SELECT * FROM vacinas;'
+        );
+        return query;
+    } catch (error) {
+        console.error('Erro ao listar vacinas:', error);
+        throw new Error('Falha ao listar vacinas');
+    }
+};
+
+/** TABELA PROCEDIMENTOS */
+
+// Cadastrar procedimento
+const cadastrarProcedimento = async (id_pet, nome, veterinario, data, dose, motivo) => {
+    try {
+        const query = await connection.execute(
+            'INSERT INTO procedimentos (id_pet, nome, veterinario, data, dose, motivo) VALUES (?, ?, ?, ?, ?, ?);',
+            [id_pet, nome, veterinario, data, dose, motivo]
+        );
+        return query;
+    } catch (error) {
+        console.error('Erro ao cadastrar procedimento:', error);
+        throw new Error('Falha ao cadastrar procedimento');
+    }
+};
+
+const buscarProcedimentoId = async (id) => {
+    try {
+        const query = await connection.execute(
+            'SELECT * FROM procedimentos WHERE id = ?;',
+            [id]
+        );
+        return query;
+    } catch (error) {
+        console.error('Erro ao buscar procedimento:', error);
+        throw new Error('Falha ao buscar procedimento');
+    }
+};
+
+const listarProcedimentosPet = async (id_pet) => {
+    try {
+        const query = await connection.execute(
+            'SELECT * FROM procedimentos WHERE id_pet = ?;',
+            [id_pet]
+        );
+        return query;
+    } catch (error) {
+        console.error('Erro ao listar procedimentos do pet:', error);
+        throw new Error('Falha ao listar procedimentos');
+    }
+};
+
+const atualizarProcedimento = async (id, id_pet, nome, veterinario, data, dose, motivo) => {
+    try {
+        const query = await connection.execute(
+            'UPDATE procedimentos SET id_pet = ?, nome = ?, veterinario = ?, data = ?, dose = ?, motivo = ? WHERE id = ?;',
+            [id_pet, nome, veterinario, data, dose, motivo, id]
+        );
+        return query;
+    } catch (error) {
+        console.error('Erro ao atualizar procedimento:', error);
+        throw new Error('Falha ao atualizar procedimento');
+    }
+};
+
+const listarProcedimentos = async () => {
+    try {
+        const query = await connection.execute(
+            'SELECT * FROM procedimentos;'
+        );
+        return query;
+    } catch (error) {
+        console.error('Erro ao listar procedimentos:', error);
+        throw new Error('Falha ao listar procedimentos');
+    }
+};
+
+/** TABELA MEDICAMENTOS */
+
+const cadastrarMedicamento = async (id_pet, nome, veterinario, data, dose, motivo) => {
+    try {
+        const query = await connection.execute(
+            'INSERT INTO medicamentos (id_pet, nome, veterinario, data, dose, motivo) VALUES (?, ?, ?, ?, ?, ?);',
+            [id_pet, nome, veterinario, data, dose, motivo]
+        );
+        return query;
+    } catch (error) {
+        console.error('Erro ao cadastrar medicamento:', error);
+        throw new Error('Falha ao cadastrar medicamento');
+    }
+};
+
+const buscarMedicamentoId = async (id) => {
+    try {
+        const query = await connection.execute(
+            'SELECT * FROM medicamentos WHERE id = ?;',
+            [id]
+        );
+        return query;
+    } catch (error) {
+        console.error('Erro ao buscar medicamento:', error);
+        throw new Error('Falha ao buscar medicamento');
+    }
+};
+
+const listarMedicamentosPet = async (id_pet) => {
+    try {
+        const query = await connection.execute(
+            'SELECT * FROM medicamentos WHERE id_pet = ?;',
+            [id_pet]
+        );
+        return query;
+    } catch (error) {
+        console.error('Erro ao listar medicamentos do pet:', error);
+        throw new Error('Falha ao listar medicamentos');
+    }
+};
+
+const atualizarMedicamento = async (id, id_pet, nome, veterinario, data, dose, motivo) => {
+    try {
+        const query = await connection.execute(
+            'UPDATE medicamentos SET id_pet = ?, nome = ?, veterinario = ?, data = ?, dose = ?, motivo = ? WHERE id = ?;',
+            [id_pet, nome, veterinario, data, dose, motivo, id]
+        );
+        return query;
+    } catch (error) {
+        console.error('Erro ao atualizar medicamento:', error);
+        throw new Error('Falha ao atualizar medicamento');
+    }
+};
+
+const listarMedicamentos = async () => {
+    try {
+        const query = await connection.execute(
+            'SELECT * FROM medicamentos;'
+        );
+        return query;
+    } catch (error) {
+        console.error('Erro ao listar medicamentos:', error);
+        throw new Error('Falha ao listar medicamentos');
+    }
+};
+
+
 
 module.exports = {
     cadastrarCliente,
@@ -161,4 +361,19 @@ module.exports = {
     atualizarCampoPet,
     statusPet,
     listarPet,
+    cadastrarVacina,
+    buscarVacinaId,
+    listarVacinasPet,
+    atualizarVacina,
+    listarVacinas,
+    cadastrarProcedimento,
+    buscarProcedimentoId,
+    listarProcedimentos,
+    listarProcedimentosPet,
+    atualizarProcedimento,
+    cadastrarMedicamento,
+    buscarMedicamentoId,
+    listarMedicamentosPet,
+    atualizarMedicamento,
+    listarMedicamentos,
 };
