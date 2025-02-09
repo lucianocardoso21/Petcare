@@ -10,7 +10,7 @@ const responderComSucesso = (res, data) => {
 
 const cadastrarCliente = async (req,res) => {
     try {const tasks = await tasksModels.cadastrarCliente(req.body);
-
+        responderComSucesso(res, tasks);
     } catch (error) {
         responderComErro(res, error);
     }
