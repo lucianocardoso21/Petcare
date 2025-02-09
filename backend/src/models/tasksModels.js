@@ -2,11 +2,15 @@ const connection = require('./connection');
 
 /** TABELA CLIENTES */
 const cadastrarCliente = async (cpf, senha, nome, celular, endereco)=>{
-    const query = await connection.execute(
+    try {const query = await connection.execute(
         'INSERT INTO clientes(cpf, senha, nome, celular, endereco, data_entrada) VALUES (?, ?, ?, ?, ?, NOW());',
         [cpf, senha, nome, celular, endereco]
     );
     return query;
+    } catch (error) {
+        console.error('Falha ao cadastrar cliente',error);
+        throw new Error('Erro ao cadastrar cliente');
+    }
 };
 const buscarClienteCpf = async (cpf)=>{
     const query = await connection.execute(
@@ -34,7 +38,7 @@ const statusCliente = async(cpf)=>{
         'SELECT status FROM clientes WHERE cpf = ?;',
         [cpf]
     );
-    if (cliente.lenght === 0){
+    if (cliente.length === 0){
         throw new Error('Cliente não encontrado');
     }
     const novoStatus = cliente[0].status === 'ativo'?'inativo':'ativo';
@@ -44,10 +48,10 @@ const statusCliente = async(cpf)=>{
     );
     return query;
 };
-const listarClientes = async (status)=>{
+const listarClientes = async (status='todos')=>{
     let query;
     let param = [];
-    if (status === 'inativo'){
+    if (status === 'todos'){
         query = 'SELECT * FROM clientes;';
     }else{
         query = 'SELECT * FROM clientes WHERE status = ?;';
@@ -92,7 +96,7 @@ const listarPetId = async(id)=>{
     );
     return query;
 };
-const listarPetCpfProp = async (cpf_prop, status)=>{
+const listarPetCpfProp = async (cpf_prop, status='todos')=>{
     let query;
     let param = [cpf_prop];
     if (status === 'todos'){
@@ -119,23 +123,24 @@ const atualizarCampoPet = async (id, campo, valor)=>{
     return query;
 };
 const statusPet = async (id)=>{
-    const query = await connection.execute(
-        'UPDATE  pets SET status="inativo" WHERE id = ?;',
+    const [pet] = await connection.execute(
+        'SELECT status FROM pets WHERE id =?;',
         [id]
+    );
+    if (pet.length === 0){
+        throw new Error('Pet não encontrado');
+    };
+    const novoStatus = pet[0].status === 'ativo'?'inativo':'ativo';
+    const query = await connection.execute('UPDATE pets SET status =? WHERE id =?',
+        [novoStatus, id]
     );
     return query;
 };
-const listarPet = async (cpf_prop, status)=>{
-    let query;
-    let param = [cpf_prop];
-    if (status === 'todos'){
-        query = 'SELECT * FROM pets WHERE cpf_prop =?;';
-    }else{
-        query = 'SELECT * FROM pets WHERE cpf_prop =? AND status =?;';
-        param.push(status);
-    }
-    const result = await connection.execute(query, param);
-    return result;
+const listarPet = async ()=>{
+    const query = await connection.execute(
+        'SELECT * FROM pets;'
+    );
+    return query;
 };
 
 
