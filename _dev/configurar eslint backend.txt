@@ -1,0 +1,22 @@
+criar arquivo .eslintrc.json na raiz do projeto:
+{
+    "env": {
+      "browser": true,
+      "es2021": true,
+      "node": true
+    },
+    "extends": "eslint:recommended",
+    "parserOptions": {
+      "ecmaVersion": 12,
+      "sourceType": "module"
+    },
+    "rules": {
+      "indent": ["error", 2],
+      "linebreak-style": ["error", "unix"],
+      "quotes": ["error", "single"],
+      "semi": ["error", "always"]
+    }
+  }
+
+migrar:
+npx  @eslint/migrate-config .eslintrc.json 
