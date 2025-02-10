@@ -35,16 +35,29 @@ const buscarClienteCpf = async (req, res) => {
 };
 
 const atualizarCliente = async (req, res) => {
+    const { cpf } = req.params; // Captura o cpf da URL
+    const { senha, nome, celular, endereco } = req.body; // Captura os dados do corpo da requisição
+
+    // Validação de dados
+    if (!senha || !nome || !celular || !endereco) {
+        return res.status(400).json({ error: 'Todos os campos (senha, nome, celular, endereco) são obrigatórios.' });
+    }
+
     try {
-        const { id } = req.params; // Obtendo ID do cliente via URL
-        const { nome, celular } = req.body; // Dados para atualização
-        if (!id || !nome || !celular) throw new Error('Faltando dados necessários');
-        const tasks = await tasksModels.atualizarCliente(id, nome, celular);
-        responderComSucesso(res, tasks);
+        // Chama a função no modelo para atualizar o cliente
+        const resultado = await tasksModels.atualizarCliente(cpf, senha, nome, celular, endereco);
+        
+        if (resultado.affectedRows === 0) {
+            return res.status(404).json({ error: 'Cliente não encontrado.' });
+        }
+
+        return res.status(200).json({ success: 'Cliente atualizado com sucesso', result: resultado });
     } catch (error) {
-        responderComErro(res, error);
+        console.error('Falha ao atualizar cliente', error);
+        return res.status(500).json({ error: 'Erro ao atualizar cliente' });
     }
 };
+
 
 const statusCliente = async (req, res) => {
     try {

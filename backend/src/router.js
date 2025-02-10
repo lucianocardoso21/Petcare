@@ -5,7 +5,7 @@ const router = express.Router();
 /** ROTAS PARA CLIENTES */
 router.post('/clientes', tasksController.cadastrarCliente); // post = criar algo
 router.get('/clientes/:cpf', tasksController.buscarClienteCpf); // get = pegar algo
-router.put('/clientes/:id', tasksController.atualizarCliente); //put = atualizar algo
+router.put('/clientes/:cpf', tasksController.atualizarCliente); //put = atualizar algo
 router.get('/clientes/status/:id', tasksController.statusCliente);
 router.get('/clientes', tasksController.listarClientes);
 router.get('/clientes/verificar/:cpf', tasksController.verificarClienteExistente);
