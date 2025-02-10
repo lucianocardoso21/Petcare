@@ -92,13 +92,29 @@ const listarClientes = async (req, res) => {
 const verificarClienteExistente = async (req, res) => {
     try {
         const { cpf } = req.params; // Obtendo CPF
-        if (!cpf) throw new Error('CPF é necessário');
-        const tasks = await tasksModels.verificarClienteExistente(cpf);
-        responderComSucesso(res, tasks);
-    } catch (error) {
-        responderComErro(res, error);
+
+        // Verificar se o CPF foi passado
+        if (!cpf) {
+            return res.status(400).json({ error: 'CPF inválido' });
+        }
+
+        // Chamar a função do modelo
+        const cliente = await tasksModels.verificarClienteExistente(cpf);
+
+        // Se o cliente não for encontrado, retorna "Cliente não encontrado"
+        if (!cliente) {
+            return res.status(404).json({ error: 'Cliente não encontrado' });
+        }
+
+        // Retorna o cliente se encontrado
+        res.status(200).json(cliente);
+    } catch {
+        // Para erros não esperados
+        return res.status(500).json({ error: 'Erro ao verificar cliente existente' });
     }
 };
+
+
 const atualizarCampoCliente = async (req, res) => {
     try {
         const { id, campo, valor } = req.body; // Campos a serem atualizados

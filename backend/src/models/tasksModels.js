@@ -142,12 +142,19 @@ const verificarClienteExistente = async (cpf) => {
             [cpf]
         );
 
+        // Se o cliente não for encontrado, retorna null
+        if (cliente.length === 0) {
+            return null; // Retorna null quando não encontrado
+        }
+
         return cliente;
     } catch (error) {
         console.error('Falha ao verificar cliente existente', error);
-        throw new Error('Erro ao verificar cliente existente');
+        throw error; // Apenas re-lança o erro para o controller tratar
     }
 };
+
+
 
 /** Atualizar Campo de Cliente */
 const atualizarCampoCliente = async (cpf, campo, valor) => {
