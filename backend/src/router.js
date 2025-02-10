@@ -30,9 +30,8 @@ router.get('/vacinas/pet/:id_pet', tasksController.listarVacinasPet);
 
 // Rotas para Procedimentos
 router.post('/procedimentos', tasksController.cadastrarProcedimento);
-router.get('/procedimentos', tasksController.listarProcedimentos);
 router.get('/procedimentos/:id', tasksController.buscarProcedimentoId);
-router.put('/procedimentos/:id', tasksController.atualizarProcedimento);
+router.patch('/procedimentos/:id', tasksController.atualizarProcedimento);
 router.get('/procedimentos/pet/:id_pet', tasksController.listarProcedimentosPet);
 
 // Rotas para Medicamentos

@@ -380,12 +380,35 @@ const atualizarVacina = async (req, res) => {
 
 const cadastrarProcedimento = async (req, res) => {
     try {
-        const tasks = await tasksModels.cadastrarProcedimento(req.body);
-        responderComSucesso(res, tasks);
+        const { id_pet, tipo, descricao, data_procedimento, veterinario } = req.body;
+
+        // Valida se todos os campos foram enviados
+        if (!id_pet || !tipo || !descricao || !data_procedimento || !veterinario) {
+            return res.status(400).json({ error: 'Todos os campos são obrigatórios.' });
+        }
+
+        // Criação da consulta SQL
+        const query = `
+            INSERT INTO procedimentos (id_pet, tipo, descricao, data_procedimento, veterinario)
+            VALUES (?, ?, ?, ?, ?);
+        `;
+
+        // Executa a consulta com os valores recebidos
+        const [resultado] = await connection.execute(query, [
+            id_pet, tipo, descricao, data_procedimento, veterinario
+        ]);
+
+        // Retorna a resposta de sucesso
+        return res.status(201).json({
+            success: 'Procedimento cadastrado com sucesso',
+            result: resultado
+        });
     } catch (error) {
-        responderComErro(res, error);
+        console.error('Erro ao cadastrar procedimento:', error);
+        return res.status(500).json({ error: 'Erro ao cadastrar procedimento' });
     }
 };
+
 const buscarProcedimentoId = async (req, res) => {
     try {
         const { id } = req.params;
@@ -396,14 +419,7 @@ const buscarProcedimentoId = async (req, res) => {
         responderComErro(res, error);
     }
 };
-const listarProcedimentos = async (req, res) => {
-    try {
-        const tasks = await tasksModels.listarProcedimentos();
-        responderComSucesso(res, tasks);
-    } catch (error) {
-        responderComErro(res, error);
-    }
-};
+
 const listarProcedimentosPet = async (req, res) => {
     try {
         const { id_pet } = req.params;
@@ -416,15 +432,64 @@ const listarProcedimentosPet = async (req, res) => {
 };
 const atualizarProcedimento = async (req, res) => {
     try {
-        const { id } = req.params;
-        const { nome, data } = req.body;
-        if (!id || !nome || !data) throw new Error('Faltam dados para atualizar o procedimento');
-        const tasks = await tasksModels.atualizarProcedimento(id, nome, data);
-        responderComSucesso(res, tasks);
+        const { id } = req.params; // Captura o id da URL
+        const { id_pet, tipo, descricao, data_procedimento, veterinario } = req.body;
+
+        // Cria um objeto para armazenar os campos atualizados e os valores
+        let camposAtualizados = [];
+        let valoresAtualizados = [];
+
+        // Verifica quais campos foram enviados e adiciona à lista
+        if (id_pet) {
+            camposAtualizados.push('id_pet');
+            valoresAtualizados.push(id_pet);
+        }
+        if (tipo) {
+            camposAtualizados.push('tipo');
+            valoresAtualizados.push(tipo);
+        }
+        if (descricao) {
+            camposAtualizados.push('descricao');
+            valoresAtualizados.push(descricao);
+        }
+        if (data_procedimento) {
+            camposAtualizados.push('data_procedimento');
+            valoresAtualizados.push(data_procedimento);
+        }
+        if (veterinario) {
+            camposAtualizados.push('veterinario');
+            valoresAtualizados.push(veterinario);
+        }
+
+        // Se nenhum campo foi enviado, retorna um erro
+        if (camposAtualizados.length === 0) {
+            return res.status(400).json({ error: 'Nenhum campo para atualizar foi enviado.' });
+        }
+
+        // Adiciona o id do procedimento ao final dos valores
+        valoresAtualizados.push(id);
+
+        // Gera a consulta SQL com os campos atualizados
+        const query = `
+            UPDATE procedimentos 
+            SET ${camposAtualizados.map(campo => `${campo} = ?`).join(', ')} 
+            WHERE id = ?;
+        `;
+
+        // Executa a consulta com os valores atualizados
+        const [resultado] = await connection.execute(query, valoresAtualizados);
+
+        if (resultado.affectedRows === 0) {
+            return res.status(404).json({ error: 'Procedimento não encontrado.' });
+        }
+
+        return res.status(200).json({ success: 'Procedimento atualizado com sucesso', result: resultado });
     } catch (error) {
-        responderComErro(res, error);
+        console.error('Erro ao atualizar procedimento:', error);
+        return res.status(500).json({ error: 'Erro ao atualizar procedimento' });
     }
 };
+
 const cadastrarMedicamento = async (req, res) => {
     try {
         const tasks = await tasksModels.cadastrarMedicamento(req.body);
@@ -499,7 +564,6 @@ module.exports = {
     atualizarVacina,
     cadastrarProcedimento,
     buscarProcedimentoId,
-    listarProcedimentos,
     listarProcedimentosPet,
     atualizarProcedimento,
     cadastrarMedicamento,

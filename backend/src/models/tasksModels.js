@@ -455,20 +455,14 @@ const atualizarVacina = async (id, camposAtualizados, valoresAtualizados) => {
 /** TABELA PROCEDIMENTOS */
 
 /** Cadastrar Procedimento */
-const cadastrarProcedimento = async (id_pet, nome, veterinario, data, dose, motivo) => {
+const cadastrarProcedimento = async (nome, descricao, id_pet, data, veterinario) => {
     try {
-        if (!id_pet || !nome || !veterinario || !data || !dose || !motivo) {
-            throw new Error('Dados inválidos para cadastro de procedimento');
-        }
-
-        const query = await connection.execute(
-            'INSERT INTO procedimentos (id_pet, nome, veterinario, data, dose, motivo) VALUES (?, ?, ?, ?, ?, ?);',
-            [id_pet, nome, veterinario, data, dose, motivo]
-        );
-        return query;
+        const query = `INSERT INTO procedimentos (nome, descricao, id_pet, data, veterinario) VALUES (?, ?, ?, ?, ?)`;
+        const [resultado] = await connection.execute(query, [nome, descricao, id_pet, data, veterinario]);
+        return resultado;
     } catch (error) {
-        console.error('Erro ao cadastrar procedimento:', error);
-        throw new Error('Falha ao cadastrar procedimento');
+        console.error('Erro ao cadastrar procedimento no model:', error);
+        throw new Error('Erro ao cadastrar procedimento');
     }
 };
 
@@ -528,19 +522,6 @@ const atualizarProcedimento = async (id, id_pet, nome, veterinario, data, dose, 
     } catch (error) {
         console.error('Erro ao atualizar procedimento:', error);
         throw new Error('Falha ao atualizar procedimento');
-    }
-};
-
-/** Listar Todos os Procedimentos */
-const listarProcedimentos = async () => {
-    try {
-        const [procedimentos] = await connection.execute(
-            'SELECT * FROM procedimentos;'
-        );
-        return procedimentos;
-    } catch (error) {
-        console.error('Erro ao listar procedimentos:', error);
-        throw new Error('Falha ao listar procedimentos');
     }
 };
 
@@ -660,7 +641,6 @@ module.exports = {
     atualizarVacina,
     cadastrarProcedimento,
     buscarProcedimentoId,
-    listarProcedimentos,
     listarProcedimentosPet,
     atualizarProcedimento,
     cadastrarMedicamento,
