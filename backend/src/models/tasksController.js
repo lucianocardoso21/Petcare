@@ -269,22 +269,42 @@ const alterarStatusPet = async (req, res) => {
 
 const cadastrarVacina = async (req, res) => {
     try {
-        const tasks = await tasksModels.cadastrarVacina(req.body);
-        responderComSucesso(res, tasks);
+        const { nome, fabricante, lote, validade, id_pet, data_aplicacao, veterinario, prox_aplicacao } = req.body;
+
+        // Validação dos campos obrigatórios
+        if (!nome || !lote || !validade || !id_pet || !data_aplicacao || !veterinario) {
+            return res.status(400).json({ error: 'Todos os campos obrigatórios devem ser preenchidos.' });
+        }
+
+        // Chama o modelo para cadastrar a vacina
+        const result = await tasksModels.cadastrarVacina(nome, fabricante, lote, validade, id_pet, data_aplicacao, veterinario, prox_aplicacao);
+
+        return res.status(201).json({ success: 'Vacina cadastrada com sucesso', result });
     } catch (error) {
-        responderComErro(res, error);
+        console.error('Erro ao cadastrar vacina', error);
+        return res.status(500).json({ error: 'Erro ao cadastrar vacina' });
     }
 };
+
 const buscarVacinaId = async (req, res) => {
     try {
-        const { id } = req.params;
-        if (!id) throw new Error('ID da vacina é necessário');
-        const tasks = await tasksModels.buscarVacinaId(id);
-        responderComSucesso(res, tasks);
+        const { id } = req.params; // Captura o id da URL
+
+        // Valida o ID
+        if (!id) {
+            return res.status(400).json({ error: 'ID da vacina é obrigatório.' });
+        }
+
+        // Chama o modelo para buscar a vacina pelo ID
+        const vacina = await tasksModels.buscarVacinaId(id);
+
+        return res.status(200).json(vacina);
     } catch (error) {
-        responderComErro(res, error);
+        console.error('Erro ao buscar vacina', error);
+        return res.status(500).json({ error: 'Erro ao buscar vacina' });
     }
 };
+
 const listarVacinasPet = async (req, res) => {
     try {
         const { id_pet } = req.params;
@@ -295,18 +315,66 @@ const listarVacinasPet = async (req, res) => {
         responderComErro(res, error);
     }
 };
+// tasksController.js
+
 const atualizarVacina = async (req, res) => {
     try {
-        const { id } = req.params; // ID da vacina a ser atualizada
-        const { campo, valor } = req.body; // Dados do campo a ser alterado
+        const { id } = req.params; // Captura o id da URL
+        const { nome, fabricante, lote, validade, id_pet, data_aplicacao, veterinario, prox_aplicacao } = req.body;
 
-        if (!id || !campo || !valor) throw new Error('Faltando dados para atualização');
+        // Cria um objeto que vai armazenar os valores atualizados, com as chaves que foram passadas
+        let camposAtualizados = [];
+        let valoresAtualizados = [];
 
-        // Chama a função no modelo para atualizar o campo da vacina
-        const tasks = await tasksModels.atualizarCampoVacina(id, campo, valor);
-        responderComSucesso(res, tasks);
+        if (nome) {
+            camposAtualizados.push('nome');
+            valoresAtualizados.push(nome);
+        }
+        if (fabricante) {
+            camposAtualizados.push('fabricante');
+            valoresAtualizados.push(fabricante);
+        }
+        if (lote) {
+            camposAtualizados.push('lote');
+            valoresAtualizados.push(lote);
+        }
+        if (validade) {
+            camposAtualizados.push('validade');
+            valoresAtualizados.push(validade);
+        }
+        if (id_pet) {
+            camposAtualizados.push('id_pet');
+            valoresAtualizados.push(id_pet);
+        }
+        if (data_aplicacao) {
+            camposAtualizados.push('data_aplicacao');
+            valoresAtualizados.push(data_aplicacao);
+        }
+        if (veterinario) {
+            camposAtualizados.push('veterinario');
+            valoresAtualizados.push(veterinario);
+        }
+        if (prox_aplicacao) {
+            camposAtualizados.push('prox_aplicacao');
+            valoresAtualizados.push(prox_aplicacao);
+        }
+
+        // Se nenhum campo foi enviado, retorna um erro
+        if (camposAtualizados.length === 0) {
+            return res.status(400).json({ error: 'Nenhum campo para atualizar foi enviado.' });
+        }
+
+        // Chama o model para atualizar a vacina
+        const resultado = await tasksModels.atualizarVacina(id, camposAtualizados, valoresAtualizados);
+
+        if (resultado.affectedRows === 0) {
+            return res.status(404).json({ error: 'Vacina não encontrada.' });
+        }
+
+        return res.status(200).json({ success: 'Vacina atualizada com sucesso', result: resultado });
     } catch (error) {
-        responderComErro(res, error);
+        console.error('Erro ao atualizar vacina', error);
+        return res.status(500).json({ error: 'Erro ao atualizar vacina' });
     }
 };
 

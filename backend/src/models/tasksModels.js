@@ -374,20 +374,19 @@ const alterarStatusPet = async (id) => {
 /** TABELA VACINAS */
 
 /** Cadastrar Vacina */
-const cadastrarVacina = async (id_pet, nome, veterinario, data, lote, px_dose) => {
+const cadastrarVacina = async (nome, fabricante, lote, validade, id_pet, data_aplicacao, veterinario, prox_aplicacao) => {
     try {
-        if (!id_pet || !nome || !veterinario || !data || !lote || !px_dose) {
-            throw new Error('Dados inválidos para cadastro de vacina');
-        }
-
+        // Executa a query de inserção no banco de dados
         const query = await connection.execute(
-            'INSERT INTO vacinas (id_pet, nome, veterinario, data, lote, px_dose) VALUES (?, ?, ?, ?, ?, ?);',
-            [id_pet, nome, veterinario, data, lote, px_dose]
+            'INSERT INTO vacinas (nome, fabricante, lote, validade, id_pet, data_aplicacao, veterinario, prox_aplicacao) ' +
+            'VALUES (?, ?, ?, ?, ?, ?, ?, ?);',
+            [nome, fabricante, lote, validade, id_pet, data_aplicacao, veterinario, prox_aplicacao]
         );
+
         return query;
     } catch (error) {
-        console.error('Erro ao cadastrar vacina:', error);
-        throw new Error('Falha ao cadastrar vacina');
+        console.error('Falha ao cadastrar vacina', error);
+        throw new Error('Erro ao cadastrar vacina');
     }
 };
 
@@ -433,20 +432,22 @@ const listarVacinasPet = async (id_pet) => {
 };
 
 /** Atualizar Vacina */
-const atualizarVacina = async (id, campo, valor) => {
-    try {
-        if (!id || !campo || !valor) {
-            throw new Error('Dados inválidos para atualização');
-        }
+// tasksModels.js
 
-        // Atualiza o campo específico da vacina
-        const query = await connection.execute(
-            `UPDATE vacinas SET ${campo} = ? WHERE id = ?`,
-            [valor, id]
-        );
-        return query;
+const atualizarVacina = async (id, camposAtualizados, valoresAtualizados) => {
+    try {
+        // Gera a consulta SQL com os campos atualizados
+        const query = `UPDATE vacinas SET ${camposAtualizados.map(campo => `${campo} = ?`).join(', ')} WHERE id = ?`;
+
+        // Adiciona o id da vacina ao final dos valores
+        valoresAtualizados.push(id);
+
+        // Executa a query no banco
+        const [resultado] = await connection.execute(query, valoresAtualizados);
+
+        return resultado; // Retorna o resultado da operação
     } catch (error) {
-        console.error('Falha ao atualizar vacina', error);
+        console.error('Erro ao atualizar vacina no model:', error);
         throw new Error('Erro ao atualizar vacina');
     }
 };
