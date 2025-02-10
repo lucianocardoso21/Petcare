@@ -492,12 +492,17 @@ const atualizarProcedimento = async (req, res) => {
 
 const cadastrarMedicamento = async (req, res) => {
     try {
-        const tasks = await tasksModels.cadastrarMedicamento(req.body);
-        responderComSucesso(res, tasks);
+        const { id_pet, nome_medicamento, dosagem, frequencia, data_inicio, data_fim } = req.body;
+
+        // Chama o model passando os parâmetros corretos
+        const novoMedicamento = await tasksModels.cadastrarMedicamento(id_pet, nome_medicamento, dosagem, frequencia, data_inicio, data_fim);
+        
+        responderComSucesso(res, novoMedicamento);
     } catch (error) {
         responderComErro(res, error);
     }
 };
+
 const buscarMedicamentoId = async (req, res) => {
     try {
         const { id } = req.params;
@@ -521,18 +526,14 @@ const listarMedicamentosPet = async (req, res) => {
 const atualizarMedicamento = async (req, res) => {
     try {
         const { id } = req.params;
-        const { nome, dose } = req.body;
-        if (!id || !nome || !dose) throw new Error('Faltam dados para atualizar o medicamento');
-        const tasks = await tasksModels.atualizarMedicamento(id, nome, dose);
-        responderComSucesso(res, tasks);
-    } catch (error) {
-        responderComErro(res, error);
-    }
-};
-const listarMedicamentos = async (req, res) => {
-    try {
-        const tasks = await tasksModels.listarMedicamentos();
-        responderComSucesso(res, tasks);
+        const dados = req.body; // Pega apenas os campos enviados
+
+        if (!id || Object.keys(dados).length === 0) {
+            throw new Error('Nenhum dado fornecido para atualização.');
+        }
+
+        const resultado = await tasksModels.atualizarMedicamento(id, dados);
+        responderComSucesso(res, resultado);
     } catch (error) {
         responderComErro(res, error);
     }
@@ -570,5 +571,4 @@ module.exports = {
     buscarMedicamentoId,
     listarMedicamentosPet,
     atualizarMedicamento,
-    listarMedicamentos,
 };

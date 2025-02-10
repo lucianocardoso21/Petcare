@@ -457,7 +457,7 @@ const atualizarVacina = async (id, camposAtualizados, valoresAtualizados) => {
 /** Cadastrar Procedimento */
 const cadastrarProcedimento = async (nome, descricao, id_pet, data, veterinario) => {
     try {
-        const query = `INSERT INTO procedimentos (nome, descricao, id_pet, data, veterinario) VALUES (?, ?, ?, ?, ?)`;
+        const query = 'INSERT INTO procedimentos (nome, descricao, id_pet, data, veterinario) VALUES (?, ?, ?, ?, ?)';
         const [resultado] = await connection.execute(query, [nome, descricao, id_pet, data, veterinario]);
         return resultado;
     } catch (error) {
@@ -528,16 +528,19 @@ const atualizarProcedimento = async (id, id_pet, nome, veterinario, data, dose, 
 /** TABELA MEDICAMENTOS */
 
 /** Cadastrar Medicamento */
-const cadastrarMedicamento = async (id_pet, nome, veterinario, data, dose, motivo) => {
+const cadastrarMedicamento = async (id_pet, nome_medicamento, dosagem, frequencia, data_inicio, data_fim) => {
     try {
-        if (!id_pet || !nome || !veterinario || !data || !dose || !motivo) {
+        // Validação para garantir que todos os campos necessários estão preenchidos
+        if (!id_pet || !nome_medicamento || !dosagem || !frequencia || !data_inicio || !data_fim) {
             throw new Error('Dados inválidos para cadastro de medicamento');
         }
 
+        // Query correta para inserir os dados na tabela `medicamentos`
         const query = await connection.execute(
-            'INSERT INTO medicamentos (id_pet, nome, veterinario, data, dose, motivo) VALUES (?, ?, ?, ?, ?, ?);',
-            [id_pet, nome, veterinario, data, dose, motivo]
+            'INSERT INTO medicamentos (id_pet, nome_medicamento, dosagem, frequencia, data_inicio, data_fim) VALUES (?, ?, ?, ?, ?, ?);',
+            [id_pet, nome_medicamento, dosagem, frequencia, data_inicio, data_fim]
         );
+
         return query;
     } catch (error) {
         console.error('Erro ao cadastrar medicamento:', error);
@@ -587,17 +590,22 @@ const listarMedicamentosPet = async (id_pet) => {
 };
 
 /** Atualizar Medicamento */
-const atualizarMedicamento = async (id, id_pet, nome, veterinario, data, dose, motivo) => {
+const atualizarMedicamento = async (id, dados) => {
     try {
-        if (!id || !id_pet || !nome || !veterinario || !data || !dose || !motivo) {
-            throw new Error('Dados inválidos para atualização de medicamento');
+        if (!id || Object.keys(dados).length === 0) {
+            throw new Error('Nenhum dado fornecido para atualização.');
         }
 
-        const query = await connection.execute(
-            'UPDATE medicamentos SET id_pet = ?, nome = ?, veterinario = ?, data = ?, dose = ?, motivo = ? WHERE id = ?;',
-            [id_pet, nome, veterinario, data, dose, motivo, id]
-        );
-        return query;
+        // Criar query dinâmica
+        const campos = Object.keys(dados).map(campo => `${campo} = ?`).join(', ');
+        const valores = Object.values(dados);
+        
+        const query = `UPDATE medicamentos SET ${campos} WHERE id = ?;`;
+        
+        // Executa a query com os valores e o ID
+        const resultado = await connection.execute(query, [...valores, id]);
+
+        return resultado;
     } catch (error) {
         console.error('Erro ao atualizar medicamento:', error);
         throw new Error('Falha ao atualizar medicamento');
@@ -605,17 +613,7 @@ const atualizarMedicamento = async (id, id_pet, nome, veterinario, data, dose, m
 };
 
 /** Listar Todos os Medicamentos */
-const listarMedicamentos = async () => {
-    try {
-        const [medicamentos] = await connection.execute(
-            'SELECT * FROM medicamentos;'
-        );
-        return medicamentos;
-    } catch (error) {
-        console.error('Erro ao listar medicamentos:', error);
-        throw new Error('Falha ao listar medicamentos');
-    }
-};
+
 
 module.exports = {
     cadastrarCliente,
@@ -647,5 +645,4 @@ module.exports = {
     buscarMedicamentoId,
     listarMedicamentosPet,
     atualizarMedicamento,
-    listarMedicamentos,
 };
