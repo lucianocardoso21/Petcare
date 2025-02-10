@@ -145,24 +145,37 @@ const contarClientes = async (req, res) => {
     }
 };
 
+const alterarStatusCliente = async (req, res) => {
+    try {
+        const { cpf } = req.params; // Recebe o CPF do cliente
+        if (!cpf) throw new Error('CPF do cliente é necessário');
+
+        const resultado = await tasksModels.alterarStatusCliente(cpf);
+
+        if (!resultado) {
+            return res.status(404).json({ error: 'Cliente não encontrado' });
+        }
+
+        return res.status(200).json({ success: 'Status do cliente alterado com sucesso' });
+    } catch (error) {
+        return res.status(400).json({ error: error.message });
+    }
+};
+
+
 const cadastrarPet = async (req, res) => {
     try {
-        const tasks = await tasksModels.cadastrarPet(req.body); // Dados do pet vindos do corpo da requisição
+        // Desestruturando os dados do corpo da requisição
+        const { nome, cpf_prop, proprietario, especie, raca, data_nasc, peso, cond_saude } = req.body;
+
+        // Passando os dados desestruturados para o modelo
+        const tasks = await tasksModels.cadastrarPet(nome, cpf_prop, proprietario, especie, raca, data_nasc, peso, cond_saude); 
         responderComSucesso(res, tasks);
     } catch (error) {
         responderComErro(res, error);
     }
 };
-const listarPetId = async (req, res) => {
-    try {
-        const { id } = req.params; // ID do pet
-        if (!id) throw new Error('ID do pet é necessário');
-        const tasks = await tasksModels.listarPetId(id);
-        responderComSucesso(res, tasks);
-    } catch (error) {
-        responderComErro(res, error);
-    }
-};
+
 const listarPetCpfProp = async (req, res) => {
     try {
         const { cpf } = req.params;
@@ -173,6 +186,18 @@ const listarPetCpfProp = async (req, res) => {
         responderComErro(res, error);
     }
 };
+
+const listarPetId = async (req, res) => {
+    try {
+        const { id } = req.params; // ID do pet
+        if (!id) throw new Error('ID do pet é necessário');
+        const tasks = await tasksModels.listarPetId(id); // Chama a função no modelo
+        responderComSucesso(res, tasks);
+    } catch (error) {
+        responderComErro(res, error);
+    }
+};
+
 const atualizarPet = async (req, res) => {
     try {
         const { id } = req.params;
@@ -212,6 +237,26 @@ const listarPet = async (req, res) => {
         responderComErro(res, error);
     }
 };
+
+const alterarStatusPet = async (req, res) => {
+    try {
+        const { id } = req.params; // Recebe o ID do pet
+        if (!id) throw new Error('ID do pet é necessário');
+
+        const resultado = await tasksModels.alterarStatusPet(id);
+
+        if (!resultado) {
+            return res.status(404).json({ error: 'Pet não encontrado' });
+        }
+
+        return res.status(200).json({ success: 'Status do pet alterado com sucesso' });
+    } catch (error) {
+        return res.status(400).json({ error: error.message });
+    }
+};
+
+/** TABELA VACINAS */
+
 const cadastrarVacina = async (req, res) => {
     try {
         const tasks = await tasksModels.cadastrarVacina(req.body);
@@ -366,6 +411,7 @@ module.exports = {
     atualizarCampoCliente,
     buscarClienteNome,
     contarClientes,
+    alterarStatusCliente,
     cadastrarPet,
     listarPetId,
     listarPetCpfProp,
@@ -373,6 +419,7 @@ module.exports = {
     atualizarCampoPet,
     statusPet,
     listarPet,
+    alterarStatusPet,
     cadastrarVacina,
     buscarVacinaId,
     listarVacinasPet,

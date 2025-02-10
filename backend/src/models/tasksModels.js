@@ -189,6 +189,28 @@ const contarClientes = async () => {
     }
 };
 
+const alterarStatusCliente = async (cpf) => {
+    try {
+        // Busca o status atual do cliente usando o cpf
+        const [cliente] = await connection.execute('SELECT status FROM clientes WHERE cpf = ?', [cpf]);
+
+        if (cliente.length === 0) {
+            throw new Error('Cliente não encontrado');
+        }
+
+        // Inverte o status: se for 'ativo' vai para 'inativo' e vice-versa
+        const novoStatus = cliente[0].status === 'ativo' ? 'inativo' : 'ativo';
+
+        // Atualiza o status do cliente
+        await connection.execute('UPDATE clientes SET status = ? WHERE cpf = ?', [novoStatus, cpf]);
+
+        return true;
+    } catch (error) {
+        console.error('Erro ao alterar status do cliente', error);
+        throw new Error('Erro ao alterar status do cliente');
+    }
+};
+
 /** TABELA PETS */
 
 /** Cadastrar Pet */
@@ -295,34 +317,27 @@ const atualizarCampoPet = async (id, campo, valor) => {
     }
 };
 
-/** Alterar Status do Pet */
+/** Consultar Status do Pet */
 const statusPet = async (id) => {
     try {
-        if (!id) {
-            throw new Error('ID inválido');
-        }
+        if (!id) throw new Error('ID do pet é necessário');
 
-        const [pet] = await connection.execute(
-            'SELECT status FROM pets WHERE id = ?;',
+        const query = await connection.execute(
+            'SELECT status FROM pets WHERE id = ?',
             [id]
         );
 
-        if (pet.length === 0) {
+        if (query[0].length === 0) {
             throw new Error('Pet não encontrado');
         }
 
-        const novoStatus = pet[0].status === 'ativo' ? 'inativo' : 'ativo';
-        const query = await connection.execute(
-            'UPDATE pets SET status = ? WHERE id = ?;',
-            [novoStatus, id]
-        );
-
-        return query;
+        return query[0][0]; // Retorna o status do pet
     } catch (error) {
-        console.error('Falha ao atualizar status do pet', error);
-        throw new Error('Erro ao atualizar status do pet');
+        console.error('Erro ao buscar status do pet', error);
+        throw new Error('Erro ao buscar status do pet');
     }
 };
+
 
 /** Listar Todos os Pets */
 const listarPet = async () => {
@@ -334,6 +349,28 @@ const listarPet = async () => {
     } catch (error) {
         console.error('Falha ao listar todos os pets', error);
         throw new Error('Erro ao listar todos os pets');
+    }
+};
+
+const alterarStatusPet = async (id) => {
+    try {
+        // Busca o status atual do pet usando o id
+        const [pet] = await connection.execute('SELECT status FROM pets WHERE id = ?', [id]);
+
+        if (pet.length === 0) {
+            throw new Error('Pet não encontrado');
+        }
+
+        // Inverte o status: se for 'ativo' vai para 'inativo' e vice-versa
+        const novoStatus = pet[0].status === 'ativo' ? 'inativo' : 'ativo';
+
+        // Atualiza o status do pet
+        await connection.execute('UPDATE pets SET status = ? WHERE id = ?', [novoStatus, id]);
+
+        return true;
+    } catch (error) {
+        console.error('Erro ao alterar status do pet', error);
+        throw new Error('Erro ao alterar status do pet');
     }
 };
 
@@ -623,6 +660,7 @@ module.exports = {
     atualizarCampoCliente,
     buscarClienteNome,
     contarClientes,
+    alterarStatusCliente,
     cadastrarPet,
     listarPetId,
     listarPetCpfProp,
@@ -630,6 +668,7 @@ module.exports = {
     atualizarCampoPet,
     statusPet,
     listarPet,
+    alterarStatusPet,
     cadastrarVacina,
     buscarVacinaId,
     listarVacinasPet,

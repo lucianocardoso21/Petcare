@@ -12,6 +12,7 @@ router.put('/clientes/:cpf', tasksController.atualizarCliente); //put = atualiza
 router.get('/clientes/status/:cpf', tasksController.statusCliente);
 router.get('/clientes/verificar/:cpf', tasksController.verificarClienteExistente);
 router.get('/clientes/nome/:nome', tasksController.buscarClienteNome);
+router.patch('/clientes/status/:cpf', tasksController.alterarStatusCliente);
 
 // Rotas para Pets
 router.post('/pets', tasksController.cadastrarPet);
@@ -21,6 +22,7 @@ router.get('/pets/:id', tasksController.listarPetId);
 router.put('/pets/:id', tasksController.atualizarPet);
 router.get('/pets/prop/:cpf', tasksController.listarPetCpfProp);
 router.get('/pets/status/:id', tasksController.statusPet);
+router.patch('/pets/status/:id', tasksController.alterarStatusPet);
 
 // Rotas para Vacinas
 router.post('/vacinas', tasksController.cadastrarVacina);
