@@ -61,25 +61,6 @@ const buscarClienteNome = async (nome) => {
     }
 };
 
-/** Atualizar Cliente */
-const atualizarCliente = async (cpf, senha, nome, celular, endereco) => {
-    try {
-        if (!cpf || !senha || !nome || !celular || !endereco) {
-            throw new Error('Dados inválidos para atualização de cliente');
-        }
-
-        const query = await connection.execute(
-            'UPDATE clientes SET senha = ?, nome = ?, celular = ?, endereco = ? WHERE cpf = ?;',
-            [senha, nome, celular, endereco, cpf]
-        );
-
-        return query;
-    } catch (error) {
-        console.error('Falha ao atualizar cliente', error);
-        throw new Error('Erro ao atualizar cliente');
-    }
-};
-
 /** Alterar Status do Cliente */
 const statusCliente = async (cpf) => {
     try {
@@ -307,21 +288,29 @@ const atualizarPet = async (id, nome, cpf_prop, proprietario, especie, raca, dat
 };
 
 /** Atualizar Campo de Pet */
-const atualizarCampoPet = async (id, campo, valor) => {
+const atualizarCampoPet = async (id, campos) => {
     try {
-        if (!id || !campo || valor === undefined) {
-            throw new Error('Dados inválidos para atualização de campo de pet');
-        }
+        // Criação da lista de atualizações no formato 'campo = valor'
+        const atualizacoes = Object.keys(campos)
+            .map(campo => `${campo} = ?`)
+            .join(', ');
 
+        // Criação dos valores a serem passados para a query
+        const valores = Object.values(campos);
+
+        // Adiciona o ID como o último valor para a query
+        valores.push(id);
+
+        // Query SQL para atualizar múltiplos campos
         const query = await connection.execute(
-            `UPDATE pets SET ${campo} = ? WHERE id = ?;`,
-            [valor, id]
+            `UPDATE pets SET ${atualizacoes} WHERE id = ?`,
+            valores
         );
 
         return query;
     } catch (error) {
-        console.error('Falha ao atualizar campo do pet', error);
-        throw new Error('Erro ao atualizar campo do pet');
+        console.error('Erro ao atualizar campos do pet', error);
+        throw new Error('Erro ao atualizar campos do pet');
     }
 };
 
@@ -661,7 +650,6 @@ const listarMedicamentos = async () => {
 module.exports = {
     cadastrarCliente,
     buscarClienteCpf,
-    atualizarCliente,
     statusCliente,
     listarClientes,
     verificarClienteExistente,

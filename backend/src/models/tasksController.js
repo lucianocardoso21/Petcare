@@ -35,31 +35,6 @@ const buscarClienteCpf = async (req, res) => {
     }
 };
 
-const atualizarCliente = async (req, res) => {
-    const { cpf } = req.params; // Captura o cpf da URL
-    const { senha, nome, celular, endereco } = req.body; // Captura os dados do corpo da requisição
-
-    // Validação de dados
-    if (!senha || !nome || !celular || !endereco) {
-        return res.status(400).json({ error: 'Todos os campos (senha, nome, celular, endereco) são obrigatórios.' });
-    }
-
-    try {
-        // Chama a função no modelo para atualizar o cliente
-        const resultado = await tasksModels.atualizarCliente(cpf, senha, nome, celular, endereco);
-        
-        if (resultado.affectedRows === 0) {
-            return res.status(404).json({ error: 'Cliente não encontrado.' });
-        }
-
-        return res.status(200).json({ success: 'Cliente atualizado com sucesso', result: resultado });
-    } catch (error) {
-        console.error('Falha ao atualizar cliente', error);
-        return res.status(500).json({ error: 'Erro ao atualizar cliente' });
-    }
-};
-
-
 const statusCliente = async (req, res) => {
     const { cpf } = req.params;
 
@@ -228,13 +203,26 @@ const atualizarPet = async (req, res) => {
 
 const atualizarCampoPet = async (req, res) => {
     try {
-        const { id } = req.params; // Captura o id do pet da URL
-        const { campo, valor } = req.body; // Captura os dados a serem atualizados
+        const { id } = req.params; // Captura o ID do pet da URL
+        const { nome, especie, raca, data_nasc, peso, cond_saude } = req.body; // Campos a serem atualizados
 
-        if (!id || !campo || !valor) throw new Error('Faltando dados para atualização');
+        // Criação de um objeto com apenas os campos válidos
+        const campos = {};
 
-        // Chama o modelo para atualizar o campo do pet
-        const tasks = await tasksModels.atualizarCampoPet(id, campo, valor);
+        if (nome !== undefined) campos.nome = nome;
+        if (especie !== undefined) campos.especie = especie;
+        if (raca !== undefined) campos.raca = raca;
+        if (data_nasc !== undefined) campos.data_nasc = data_nasc;
+        if (peso !== undefined) campos.peso = peso;
+        if (cond_saude !== undefined) campos.cond_saude = cond_saude;
+
+        // Valida se pelo menos um campo foi passado para atualizar
+        if (Object.keys(campos).length === 0) {
+            return res.status(400).json({ error: 'Pelo menos um campo precisa ser informado para atualização.' });
+        }
+
+        // Chama o modelo para atualizar os campos do pet
+        const tasks = await tasksModels.atualizarCampoPet(id, campos);
         responderComSucesso(res, tasks);
     } catch (error) {
         responderComErro(res, error);
@@ -426,7 +414,6 @@ module.exports = {
     responderComErro,
     cadastrarCliente,
     buscarClienteCpf,
-    atualizarCliente,
     statusCliente,
     listarClientes,
     verificarClienteExistente,
