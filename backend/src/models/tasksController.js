@@ -8,13 +8,21 @@ const responderComSucesso = (res, data) => {
     return res.status(200).json(data);
 };
 
-const cadastrarCliente = async (req,res) => {
-    try {const tasks = await tasksModels.cadastrarCliente(req.body);
-        responderComSucesso(res, tasks);
+const cadastrarCliente = async (req, res) => {
+    try {
+        // Pegando os dados do corpo da requisição (JSON)
+        const { cpf, senha, nome, celular, endereco } = req.body;
+        
+        // Chama o model para cadastrar o cliente
+        const cliente = await tasksModels.cadastrarCliente(cpf, senha, nome, celular, endereco);
+
+        // Envia resposta de sucesso
+        responderComSucesso(res, cliente);
     } catch (error) {
         responderComErro(res, error);
     }
 };
+
 const buscarClienteCpf = async (req, res) => {
     try {
         const { cpf } = req.params; // Obtendo CPF via parâmetros de URL
