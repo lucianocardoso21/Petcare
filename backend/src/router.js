@@ -15,32 +15,32 @@ router.get('/clientes/nome/:nome', tasksController.buscarClienteNome);
 
 // Rotas para Pets
 router.post('/pets', tasksController.cadastrarPet);
-router.get('/pets/:id', tasksController.listarPetId);
-router.get('/pets/prop/:cpf', tasksController.listarPetCpfProp);
-router.put('/pets/:id', tasksController.atualizarPet);
-router.patch('/pets/atualizar', tasksController.atualizarCampoPet);
-router.get('/pets/status/:id', tasksController.statusPet);
 router.get('/pets', tasksController.listarPet);
+router.patch('/pets/atualizar', tasksController.atualizarCampoPet);
+router.get('/pets/:id', tasksController.listarPetId);
+router.put('/pets/:id', tasksController.atualizarPet);
+router.get('/pets/prop/:cpf', tasksController.listarPetCpfProp);
+router.get('/pets/status/:id', tasksController.statusPet);
 
 // Rotas para Vacinas
 router.post('/vacinas', tasksController.cadastrarVacina);
-router.get('/vacinas/:id', tasksController.buscarVacinaId);
-router.get('/vacinas/pet/:id_pet', tasksController.listarVacinasPet);
-router.put('/vacinas/:id', tasksController.atualizarVacina);
 router.get('/vacinas', tasksController.listarVacinas);
+router.get('/vacinas/:id', tasksController.buscarVacinaId);
+router.put('/vacinas/:id', tasksController.atualizarVacina);
+router.get('/vacinas/pet/:id_pet', tasksController.listarVacinasPet);
 
 // Rotas para Procedimentos
 router.post('/procedimentos', tasksController.cadastrarProcedimento);
-router.get('/procedimentos/:id', tasksController.buscarProcedimentoId);
 router.get('/procedimentos', tasksController.listarProcedimentos);
-router.get('/procedimentos/pet/:id_pet', tasksController.listarProcedimentosPet);
+router.get('/procedimentos/:id', tasksController.buscarProcedimentoId);
 router.put('/procedimentos/:id', tasksController.atualizarProcedimento);
+router.get('/procedimentos/pet/:id_pet', tasksController.listarProcedimentosPet);
 
 // Rotas para Medicamentos
 router.post('/medicamentos', tasksController.cadastrarMedicamento);
-router.get('/medicamentos/:id', tasksController.buscarMedicamentoId);
-router.get('/medicamentos/pet/:id_pet', tasksController.listarMedicamentosPet);
-router.put('/medicamentos/:id', tasksController.atualizarMedicamento);
 router.get('/medicamentos', tasksController.listarMedicamentos);
+router.get('/medicamentos/:id', tasksController.buscarMedicamentoId);
+router.put('/medicamentos/:id', tasksController.atualizarMedicamento);
+router.get('/medicamentos/pet/:id_pet', tasksController.listarMedicamentosPet);
 
 module.exports = router;
