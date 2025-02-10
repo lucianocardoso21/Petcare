@@ -4,14 +4,14 @@ const router = express.Router();
 
 /** ROTAS PARA CLIENTES */
 router.post('/clientes', tasksController.cadastrarCliente); // post = criar algo
+router.get('/clientes', tasksController.listarClientes);
+router.get('/clientes/contar', tasksController.contarClientes);
+router.patch('/clientes/atualizar', tasksController.atualizarCampoCliente); // patch = atualizar um campo especifico
 router.get('/clientes/:cpf', tasksController.buscarClienteCpf); // get = pegar algo
 router.put('/clientes/:cpf', tasksController.atualizarCliente); //put = atualizar algo
 router.get('/clientes/status/:cpf', tasksController.statusCliente);
-router.get('/clientes', tasksController.listarClientes);
 router.get('/clientes/verificar/:cpf', tasksController.verificarClienteExistente);
-router.patch('/clientes/atualizar', tasksController.atualizarCampoCliente); // patch = atualizar um campo especifico
 router.get('/clientes/nome/:nome', tasksController.buscarClienteNome);
-router.get('/clientes/contar', tasksController.contarClientes);
 
 // Rotas para Pets
 router.post('/pets', tasksController.cadastrarPet);
