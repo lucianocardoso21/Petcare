@@ -297,23 +297,19 @@ const listarVacinasPet = async (req, res) => {
 };
 const atualizarVacina = async (req, res) => {
     try {
-        const { id } = req.params;
-        const { nome, data } = req.body;
-        if (!id || !nome || !data) throw new Error('Faltam dados para atualizar a vacina');
-        const tasks = await tasksModels.atualizarVacina(id, nome, data);
+        const { id } = req.params; // Captura o ID da vacina
+        const { campo, valor } = req.body; // Captura o campo e o valor a serem atualizados
+
+        if (!id || !campo || !valor) throw new Error('Faltando dados para atualização');
+        
+        // Chama a função no modelo para atualizar o campo da vacina
+        const tasks = await tasksModels.atualizarVacina(id, campo, valor);
         responderComSucesso(res, tasks);
     } catch (error) {
         responderComErro(res, error);
     }
 };
-const listarVacinas = async (req, res) => {
-    try {
-        const tasks = await tasksModels.listarVacinas();
-        responderComSucesso(res, tasks);
-    } catch (error) {
-        responderComErro(res, error);
-    }
-};
+
 const cadastrarProcedimento = async (req, res) => {
     try {
         const tasks = await tasksModels.cadastrarProcedimento(req.body);
@@ -433,7 +429,6 @@ module.exports = {
     buscarVacinaId,
     listarVacinasPet,
     atualizarVacina,
-    listarVacinas,
     cadastrarProcedimento,
     buscarProcedimentoId,
     listarProcedimentos,

@@ -433,33 +433,21 @@ const listarVacinasPet = async (id_pet) => {
 };
 
 /** Atualizar Vacina */
-const atualizarVacina = async (id, id_pet, nome, veterinario, data, lote, px_dose) => {
+const atualizarVacina = async (id, campo, valor) => {
     try {
-        if (!id || !id_pet || !nome || !veterinario || !data || !lote || !px_dose) {
-            throw new Error('Dados inválidos para atualização de vacina');
+        if (!id || !campo || !valor) {
+            throw new Error('Dados inválidos para atualização');
         }
 
+        // Atualiza o campo específico da vacina
         const query = await connection.execute(
-            'UPDATE vacinas SET id_pet = ?, nome = ?, veterinario = ?, data = ?, lote = ?, px_dose = ? WHERE id = ?;',
-            [id_pet, nome, veterinario, data, lote, px_dose, id]
+            `UPDATE vacinas SET ${campo} = ? WHERE id = ?`,
+            [valor, id]
         );
         return query;
     } catch (error) {
-        console.error('Erro ao atualizar vacina:', error);
-        throw new Error('Falha ao atualizar vacina');
-    }
-};
-
-/** Listar Todas as Vacinas */
-const listarVacinas = async () => {
-    try {
-        const [vacinas] = await connection.execute(
-            'SELECT * FROM vacinas;'
-        );
-        return vacinas;
-    } catch (error) {
-        console.error('Erro ao listar vacinas:', error);
-        throw new Error('Falha ao listar vacinas');
+        console.error('Falha ao atualizar vacina', error);
+        throw new Error('Erro ao atualizar vacina');
     }
 };
 
@@ -669,7 +657,6 @@ module.exports = {
     buscarVacinaId,
     listarVacinasPet,
     atualizarVacina,
-    listarVacinas,
     cadastrarProcedimento,
     buscarProcedimentoId,
     listarProcedimentos,

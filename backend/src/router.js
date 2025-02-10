@@ -24,9 +24,8 @@ router.get('/pets/status/:id', tasksController.statusPet);
 
 // Rotas para Vacinas
 router.post('/vacinas', tasksController.cadastrarVacina);
-router.get('/vacinas', tasksController.listarVacinas);
 router.get('/vacinas/:id', tasksController.buscarVacinaId);
-router.put('/vacinas/:id', tasksController.atualizarVacina);
+router.patch('/vacinas/:id', tasksController.atualizarVacina);
 router.get('/vacinas/pet/:id_pet', tasksController.listarVacinasPet);
 
 // Rotas para Procedimentos
