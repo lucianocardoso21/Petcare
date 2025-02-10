@@ -1,4 +1,5 @@
 const tasksModels = require('./tasksModels');
+const connection = require('./connection');
 
 const responderComErro = (res, erro) => {
     return res.status(500).json({ error: erro.message || erro });
@@ -60,15 +61,26 @@ const atualizarCliente = async (req, res) => {
 
 
 const statusCliente = async (req, res) => {
+    const { cpf } = req.params;
+
     try {
-        const { id } = req.params; // Obtendo ID do cliente
-        if (!id) throw new Error('ID do cliente é necessário');
-        const tasks = await tasksModels.statusCliente(id);
-        responderComSucesso(res, tasks);
+        const [rows] = await connection.execute(
+            'SELECT status FROM clientes WHERE cpf = ?',
+            [cpf]
+        );
+
+        if (rows.length === 0) {
+            return res.status(404).json({ message: 'Cliente não encontrado' });
+        }
+
+        // Retorna o status do cliente
+        return res.status(200).json({ status: rows[0].status });
     } catch (error) {
-        responderComErro(res, error);
+        console.error('Falha ao buscar status do cliente', error);
+        return res.status(500).json({ message: 'Erro ao buscar status do cliente' });
     }
 };
+
 const listarClientes = async (req, res) => {
     try {
         const tasks = await tasksModels.listarClientes();
