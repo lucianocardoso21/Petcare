@@ -297,13 +297,13 @@ const listarVacinasPet = async (req, res) => {
 };
 const atualizarVacina = async (req, res) => {
     try {
-        const { id } = req.params; // Captura o ID da vacina
-        const { campo, valor } = req.body; // Captura o campo e o valor a serem atualizados
+        const { id } = req.params; // ID da vacina a ser atualizada
+        const { campo, valor } = req.body; // Dados do campo a ser alterado
 
         if (!id || !campo || !valor) throw new Error('Faltando dados para atualização');
-        
+
         // Chama a função no modelo para atualizar o campo da vacina
-        const tasks = await tasksModels.atualizarVacina(id, campo, valor);
+        const tasks = await tasksModels.atualizarCampoVacina(id, campo, valor);
         responderComSucesso(res, tasks);
     } catch (error) {
         responderComErro(res, error);
