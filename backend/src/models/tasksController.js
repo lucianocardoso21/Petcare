@@ -117,9 +117,9 @@ const verificarClienteExistente = async (req, res) => {
 
 const atualizarCampoCliente = async (req, res) => {
     try {
-        const { id, campo, valor } = req.body; // Campos a serem atualizados
-        if (!id || !campo || !valor) throw new Error('Faltando dados para atualização');
-        const tasks = await tasksModels.atualizarCampoCliente(id, campo, valor);
+        const { cpf, campo, valor } = req.body; // Campos a serem atualizados
+        if (!cpf || !campo || !valor) throw new Error('Faltando dados para atualização');
+        const tasks = await tasksModels.atualizarCampoCliente(cpf, campo, valor);
         responderComSucesso(res, tasks);
     } catch (error) {
         responderComErro(res, error);
@@ -135,6 +135,7 @@ const buscarClienteNome = async (req, res) => {
         responderComErro(res, error);
     }
 };
+
 const contarClientes = async (req, res) => {
     try {
         const tasks = await tasksModels.contarClientes();
