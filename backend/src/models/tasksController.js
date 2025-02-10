@@ -114,17 +114,33 @@ const verificarClienteExistente = async (req, res) => {
     }
 };
 
-
 const atualizarCampoCliente = async (req, res) => {
     try {
-        const { cpf, campo, valor } = req.body; // Campos a serem atualizados
-        if (!cpf || !campo || !valor) throw new Error('Faltando dados para atualização');
-        const tasks = await tasksModels.atualizarCampoCliente(cpf, campo, valor);
+        const { cpf } = req.params; // Captura o CPF do cliente da URL
+        const { senha, nome, celular, endereco } = req.body; // Campos a serem atualizados
+
+        // Criação de um objeto com apenas os campos válidos
+        const campos = {};
+
+        if (senha !== undefined) campos.senha = senha;
+        if (nome !== undefined) campos.nome = nome;
+        if (celular !== undefined) campos.celular = celular;
+        if (endereco !== undefined) campos.endereco = endereco;
+
+        // Valida se pelo menos um campo foi passado para atualizar
+        if (Object.keys(campos).length === 0) {
+            return res.status(400).json({ error: 'Pelo menos um campo precisa ser informado para atualização.' });
+        }
+
+        // Chama o modelo para atualizar os campos do cliente
+        const tasks = await tasksModels.atualizarCampoCliente(cpf, campos);
         responderComSucesso(res, tasks);
     } catch (error) {
         responderComErro(res, error);
     }
 };
+
+
 const buscarClienteNome = async (req, res) => {
     try {
         const { nome } = req.params; // Nome para busca
@@ -209,16 +225,22 @@ const atualizarPet = async (req, res) => {
         responderComErro(res, error);
     }
 };
+
 const atualizarCampoPet = async (req, res) => {
     try {
-        const { id, campo, valor } = req.body;
-        if (!id || !campo || !valor) throw new Error('Faltam dados para atualização do pet');
+        const { id } = req.params; // Captura o id do pet da URL
+        const { campo, valor } = req.body; // Captura os dados a serem atualizados
+
+        if (!id || !campo || !valor) throw new Error('Faltando dados para atualização');
+
+        // Chama o modelo para atualizar o campo do pet
         const tasks = await tasksModels.atualizarCampoPet(id, campo, valor);
         responderComSucesso(res, tasks);
     } catch (error) {
         responderComErro(res, error);
     }
 };
+
 const statusPet = async (req, res) => {
     try {
         const { id } = req.params;

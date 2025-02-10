@@ -157,21 +157,29 @@ const verificarClienteExistente = async (cpf) => {
 
 
 /** Atualizar Campo de Cliente */
-const atualizarCampoCliente = async (cpf, campo, valor) => {
+const atualizarCampoCliente = async (cpf, campos) => {
     try {
-        if (!cpf || !campo || valor === undefined) {
-            throw new Error('Dados inválidos para atualização de campo de cliente');
-        }
+        // Criação da lista de atualizações no formato 'campo = valor'
+        const atualizacoes = Object.keys(campos)
+            .map(campo => `${campo} = ?`)
+            .join(', ');
 
+        // Criação dos valores a serem passados para a query
+        const valores = Object.values(campos);
+
+        // Adiciona o CPF como o último valor para a query
+        valores.push(cpf);
+
+        // Query SQL para atualizar múltiplos campos
         const query = await connection.execute(
-            `UPDATE clientes SET ${campo} = ? WHERE cpf = ?;`,
-            [valor, cpf]
+            `UPDATE clientes SET ${atualizacoes} WHERE cpf = ?`,
+            valores
         );
 
         return query;
     } catch (error) {
-        console.error('Falha ao atualizar campo do cliente', error);
-        throw new Error('Erro ao atualizar campo do cliente');
+        console.error('Erro ao atualizar campos do cliente', error);
+        throw new Error('Erro ao atualizar campos do cliente');
     }
 };
 

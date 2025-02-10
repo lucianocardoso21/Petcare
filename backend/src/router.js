@@ -6,23 +6,21 @@ const router = express.Router();
 router.post('/clientes', tasksController.cadastrarCliente); // post = criar algo
 router.get('/clientes', tasksController.listarClientes);
 router.get('/clientes/contar', tasksController.contarClientes);
-router.patch('/clientes/atualizar', tasksController.atualizarCampoCliente); // patch = atualizar um campo especifico
+router.patch('/clientes/atualizar/:cpf', tasksController.atualizarCampoCliente); // patch = atualizar um campo especifico
+router.patch('/clientes/status/:cpf', tasksController.alterarStatusCliente);
 router.get('/clientes/:cpf', tasksController.buscarClienteCpf); // get = pegar algo
-router.put('/clientes/:cpf', tasksController.atualizarCliente); //put = atualizar algo
 router.get('/clientes/status/:cpf', tasksController.statusCliente);
 router.get('/clientes/verificar/:cpf', tasksController.verificarClienteExistente);
 router.get('/clientes/nome/:nome', tasksController.buscarClienteNome);
-router.patch('/clientes/status/:cpf', tasksController.alterarStatusCliente);
 
 // Rotas para Pets
 router.post('/pets', tasksController.cadastrarPet);
 router.get('/pets', tasksController.listarPet);
-router.patch('/pets/atualizar', tasksController.atualizarCampoPet);
+router.patch('/pets/atualizar/:id', tasksController.atualizarCampoPet);
+router.patch('/pets/status/:id', tasksController.alterarStatusPet);
 router.get('/pets/:id', tasksController.listarPetId);
-router.put('/pets/:id', tasksController.atualizarPet);
 router.get('/pets/prop/:cpf', tasksController.listarPetCpfProp);
 router.get('/pets/status/:id', tasksController.statusPet);
-router.patch('/pets/status/:id', tasksController.alterarStatusPet);
 
 // Rotas para Vacinas
 router.post('/vacinas', tasksController.cadastrarVacina);
