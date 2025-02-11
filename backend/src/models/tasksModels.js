@@ -1,4 +1,6 @@
 const connection = require('./connection');
+const jwt = require('jsonwebtoken');
+
 
 /** Cadastrar Cliente */
 const cadastrarCliente = async (cpf, senha, nome, celular, endereco) => {
@@ -612,8 +614,38 @@ const atualizarMedicamento = async (id, dados) => {
     }
 };
 
-/** Listar Todos os Medicamentos */
+// Função para autenticar o cliente pelo CPF
+const autenticarClientePorCpf = async (cpf) => {
+    const query = 'SELECT * FROM clientes WHERE cpf = ?';
+    const [rows] = await connection.execute(query, [cpf]);
 
+    if (rows.length === 0) {
+        return null; // Retorna null caso o cliente não exista
+    }
+
+    return rows[0]; // Retorna o cliente encontrado
+};
+
+// Função para verificar o token
+const verificarToken = (token) => {
+    return new Promise((resolve, reject) => {
+        if (!token) {
+            return reject('Token não fornecido');
+        }
+
+        jwt.verify(token, 'seu-segredo', (err, decoded) => {
+            if (err) {
+                return reject('Token inválido');
+            }
+            resolve(decoded); // Se o token for válido, retorna o payload do token
+        });
+    });
+};
+
+module.exports = {
+    autenticarClientePorCpf,
+    verificarToken
+};
 
 module.exports = {
     cadastrarCliente,
@@ -645,4 +677,5 @@ module.exports = {
     buscarMedicamentoId,
     listarMedicamentosPet,
     atualizarMedicamento,
+    autenticarClientePorCpf,
 };

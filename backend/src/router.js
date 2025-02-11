@@ -1,5 +1,6 @@
 const express = require('express');
 const tasksController = require('./models/tasksController');
+const verificaToken = require('./models/verificarToken');
 const router = express.Router();
 
 /** ROTAS PARA CLIENTES */
@@ -39,5 +40,9 @@ router.post('/medicamentos', tasksController.cadastrarMedicamento);
 router.get('/medicamentos/:id', tasksController.buscarMedicamentoId);
 router.patch('/medicamentos/:id', tasksController.atualizarMedicamento);
 router.get('/medicamentos/pet/:id_pet', tasksController.listarMedicamentosPet);
+
+// Rota de login
+router.post('/login', tasksController.loginCliente);
+router.get('/dashboard', verificaToken, tasksController.dashboard);
 
 module.exports = router;

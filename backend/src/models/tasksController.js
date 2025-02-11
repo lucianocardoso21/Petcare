@@ -1,5 +1,6 @@
 const tasksModels = require('./tasksModels');
 const connection = require('./connection');
+const jwt = require('jsonwebtoken');
 
 const responderComErro = (res, erro) => {
     return res.status(500).json({ error: erro.message || erro });
@@ -539,6 +540,61 @@ const atualizarMedicamento = async (req, res) => {
     }
 };
 
+const secretKey = 'password';  // Defina sua chave secreta
+
+// tasksController.js
+const loginCliente = async (req, res) => {
+    try {
+        const { cpf, senha } = req.body;
+
+        if (!cpf || !senha) {
+            return res.status(400).json({ error: 'CPF e senha são obrigatórios' });
+        }
+
+        // Chama o modelo para autenticar o cliente pelo CPF
+        const cliente = await tasksModels.autenticarClientePorCpf(cpf);
+
+        // Verifica se o cliente foi encontrado
+        if (!cliente) {
+            return res.status(404).json({ error: 'Cliente não encontrado' });
+        }
+
+        // Verifica se a senha está correta
+        if (cliente.senha !== senha) {
+            return res.status(401).json({ error: 'Senha incorreta' });
+        }
+
+        // Gera o token
+        const token = jwt.sign({ cpf: cliente.cpf }, 'seu-segredo-aqui', { expiresIn: '1h' });  // Expiração de 1 hora
+
+        // Retorna sucesso no login e o token gerado
+        return res.status(200).json({ success: 'Login realizado com sucesso', token });
+    } catch (error) {
+        console.error('Erro ao realizar login:', error);
+        return res.status(500).json({ error: 'Erro ao realizar login' });
+    }
+};
+
+  
+// Função para a rota protegida
+const dashboard = async (req, res) => {
+    const token = req.headers['authorization']?.split(' ')[1]; // Pega o token da requisição
+    try {
+        const usuario = await tasksModels.verificarToken(token); // Verifica o token
+  
+        res.json({
+            message: 'Bem-vindo ao seu dashboard!',
+            usuario: {
+                id: usuario.id,
+                nome: usuario.nome,
+                email: usuario.email, // Supondo que você tenha o email no token
+            }
+        });
+    } catch {
+        res.status(403).json({ error: 'Token inválido ou não fornecido' });
+    }
+};
+
 module.exports = {
     responderComSucesso,
     responderComErro,
@@ -571,4 +627,6 @@ module.exports = {
     buscarMedicamentoId,
     listarMedicamentosPet,
     atualizarMedicamento,
+    loginCliente,
+    dashboard
 };
