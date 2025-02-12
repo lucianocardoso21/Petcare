@@ -37,7 +37,7 @@ export default function LoginForm({ onSubmit, errorMessage, isLoading }) {
 
       <button
         type="submit"
-        className="w-full bg-blue-500 text-white py-2 rounded"
+        className="w-full bg-purple-700 text-white py-2 rounded"
         disabled={isLoading}
       >
         {isLoading ? 'Carregando...' : 'Entrar'}

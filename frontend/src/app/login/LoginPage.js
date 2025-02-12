@@ -40,11 +40,17 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-start justify-center py-10  ">
-      <div className="min-h-screen relative">
-        <img src="/images/dog.png" alt="Dog" className="w-32 h-32 mb-4" />
-        <img src="/images/cat.png" alt="Cat" className="w-32 h-32 mb-4" />
-      </div>
+    <div className="min-h-screen flex items-center justify-center py-10 relative">
+      <img
+      src="/images/dog.png" 
+      alt="Dog" 
+      style={{top:'30px', left:'460px'}}
+      className="absolute top-4 left-4 w-32 h-32" />
+      <img 
+      src="/images/cat.png" 
+      alt="Cat" 
+      style={{bottom: '150px', right: '410px'}}
+      className="absolute bottom-4 right-4 w-32 h-32 rotate-90" />
       <LoginForm onSubmit={handleLogin} errorMessage={errorMessage} isLoading={isLoading} />
     </div>
   );
