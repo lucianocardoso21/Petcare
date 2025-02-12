@@ -565,7 +565,7 @@ const loginCliente = async (req, res) => {
         }
 
         // Gera o token
-        const token = jwt.sign({ cpf: cliente.cpf }, 'seu-segredo-aqui', { expiresIn: '1h' });  // Expiração de 1 hora
+        const token = jwt.sign({ cpf: cliente.cpf }, secretKey, { expiresIn: '1h' });  // Expiração de 1 hora
 
         // Retorna sucesso no login e o token gerado
         return res.status(200).json({ success: 'Login realizado com sucesso', token });
@@ -574,25 +574,18 @@ const loginCliente = async (req, res) => {
         return res.status(500).json({ error: 'Erro ao realizar login' });
     }
 };
-
   
 // Função para a rota protegida
-const dashboard = async (req, res) => {
-    const token = req.headers['authorization']?.split(' ')[1]; // Pega o token da requisição
-    try {
-        const usuario = await tasksModels.verificarToken(token); // Verifica o token
-  
-        res.json({
-            message: 'Bem-vindo ao seu dashboard!',
-            usuario: {
-                id: usuario.id,
-                nome: usuario.nome,
-                email: usuario.email, // Supondo que você tenha o email no token
-            }
-        });
-    } catch {
-        res.status(403).json({ error: 'Token inválido ou não fornecido' });
-    }
+const dashboard = (req, res) => {
+    const usuario = req.user;  // O usuário está disponível no req.user após a verificação do token
+
+    res.json({
+        message: 'Bem-vindo ao seu dashboard!',
+        usuario: {
+            id: usuario.cpf,
+            nome: usuario.nome,
+        }
+    });
 };
 
 module.exports = {

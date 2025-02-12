@@ -626,27 +626,6 @@ const autenticarClientePorCpf = async (cpf) => {
     return rows[0]; // Retorna o cliente encontrado
 };
 
-// Função para verificar o token
-const verificarToken = (token) => {
-    return new Promise((resolve, reject) => {
-        if (!token) {
-            return reject('Token não fornecido');
-        }
-
-        jwt.verify(token, 'seu-segredo', (err, decoded) => {
-            if (err) {
-                return reject('Token inválido');
-            }
-            resolve(decoded); // Se o token for válido, retorna o payload do token
-        });
-    });
-};
-
-module.exports = {
-    autenticarClientePorCpf,
-    verificarToken
-};
-
 module.exports = {
     cadastrarCliente,
     buscarClienteCpf,
