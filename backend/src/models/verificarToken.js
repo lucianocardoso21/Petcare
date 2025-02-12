@@ -12,7 +12,7 @@ const verificaToken = (req, res, next) => {
         return res.status(401).json({ error: 'Token não encontrado' });
     }
 
-    console.log('Token recebido:', token); // Log do token recebido
+    // console.log('Token recebido:', token); // Log do token recebido
 
     // Verifica a validade do token
     jwt.verify(token, secretKey, (err, decoded) => {
