@@ -1,12 +1,19 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import LoginForm from './LoginForm';
+import LoginForm from '@/components/LoginForm';
 
 export default function LoginPage() {
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false); // Estado para controlar o carregamento
   const router = useRouter();
+
+  useEffect(() =>{
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body,style.overflow = 'auto';
+    };
+  }, []);
 
   const handleLogin = async (data) => {
     setErrorMessage('');
@@ -33,7 +40,11 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
+    <div className="min-h-screen flex items-start justify-center py-10  ">
+      <div className="min-h-screen relative">
+        <img src="/images/dog.png" alt="Dog" className="w-32 h-32 mb-4" />
+        <img src="/images/cat.png" alt="Cat" className="w-32 h-32 mb-4" />
+      </div>
       <LoginForm onSubmit={handleLogin} errorMessage={errorMessage} isLoading={isLoading} />
     </div>
   );
