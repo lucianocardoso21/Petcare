@@ -1,17 +1,18 @@
+// LoginPage.js
 'use client';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import LoginForm from '@/components/LoginForm';
 
-export default function LoginPage() {
+export default function LoginPage({ className }) {
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false); // Estado para controlar o carregamento
   const router = useRouter();
 
-  useEffect(() =>{
+  useEffect(() => {
     document.body.style.overflow = 'hidden';
     return () => {
-      document.body,style.overflow = 'auto';
+      document.body.style.overflow = 'auto';
     };
   }, []);
 
@@ -40,17 +41,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center py-10 relative">
-      <img
-      src="/images/dog.png" 
-      alt="Dog" 
-      style={{top:'30px', left:'460px'}}
-      className="absolute top-4 left-4 w-32 h-32" />
-      <img 
-      src="/images/cat.png" 
-      alt="Cat" 
-      style={{bottom: '150px', right: '410px'}}
-      className="absolute bottom-4 right-4 w-32 h-32 rotate-90" />
+    <div className={`${className} shadow-2xl`}>
       <LoginForm onSubmit={handleLogin} errorMessage={errorMessage} isLoading={isLoading} />
     </div>
   );

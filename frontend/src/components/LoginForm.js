@@ -1,3 +1,4 @@
+// LoginForm.js
 'use client';
 import { useForm } from 'react-hook-form';
 import MaskedInput from 'react-text-mask';
@@ -8,11 +9,11 @@ export default function LoginForm({ onSubmit, errorMessage, isLoading }) {
   const cpfMask = [/\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '-', /\d/, /\d/];
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="w-96 p-6 border rounded shadow-md">
-      <h1 className="font-delius text-xl text-center font-bold text-purple-800">Faça seu Login</h1>
-      {errorMessage && <p className="text-red-500 mb-4">{errorMessage}</p>}
+    <form onSubmit={handleSubmit(onSubmit)} className="w-96 p-6 border rounded shadow-md form-container">
+      <h1 className="font-delius text-xl text-center font-bold text-purple-800 heading">Faça seu Login</h1>
+      {errorMessage && <p className="text-red-500 mb-4" aria-live="assertive">{errorMessage}</p>}
       
-      <div className="mb-4">
+      <div className="mb-4 inputContainer">
         <label className='font-bold text-purple-800' htmlFor="cpf">CPF:</label>
         <MaskedInput
           mask={cpfMask}
@@ -24,7 +25,7 @@ export default function LoginForm({ onSubmit, errorMessage, isLoading }) {
         {errors.cpf && <p className="text-red-500">{errors.cpf.message}</p>}
       </div>
 
-      <div className="mb-4">
+      <div className="mb-4 inputContainer">
         <label className='font-bold text-purple-800' htmlFor="senha">Senha:</label>
         <input
           type="password"
