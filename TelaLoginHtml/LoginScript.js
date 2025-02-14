@@ -59,3 +59,35 @@ showPasswordButton.addEventListener('click', event => {
     });
   }
 });
+
+document.getElementById("login-form").addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  const cpf = document.getElementById("cpf").value;
+  const senha = document.getElementById("senha").value;
+
+  // Enviar dados para o backend
+  fetch("http://localhost:1337/login", {
+      method: "POST",
+      headers: {
+          "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ cpf, senha })
+  })
+  .then(response => response.json())
+  .then(data => {
+      if (data.success) {
+          // Armazena o token no localStorage (ou sessionStorage)
+          localStorage.setItem('authToken', data.token);
+
+          // Redireciona para o dashboard
+          window.location.href = "/dashboard.html"; // Substitua com o URL real do seu dashboard
+      } else {
+          // Exibe mensagem de erro
+          document.getElementById("error-message").style.display = "block";
+      }
+  })
+  .catch(error => {
+      console.error("Erro ao fazer login:", error);
+  });
+});

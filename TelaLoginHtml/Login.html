@@ -9,8 +9,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Delius&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://public.codepenassets.com/css/reset-2.0.min.css">
   <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'>
-  <link rel="stylesheet" href="./LoginStyle.css">
   <link rel="shortcut icon" href="data:," type="image/x-icon">
+  <link rel="stylesheet" href="./LoginStyle.css">
 
 </head>
 
@@ -86,16 +86,18 @@
       </div>
     </div>
     <div class="login">
-      <label>
-        <div class="fa fa-user"></div>
-        <input class="username" type="text" autocomplete="on" placeholder="CPF" />
-      </label>
-      <label>
-        <div class="fa fa-key"></div>
-        <input class="password" type="password" autocomplete="off" placeholder="Senha" />
-        <button class="password-button">Mostrar</button>
-      </label>
-      <button class="login-button">Login</button>
+      <form id="login-form" class="login">
+        <label>
+          <div class="fa fa-user"></div>
+          <input class="username" id="cpf" type="text" autocomplete="on" placeholder="CPF" />
+        </label>
+        <label>
+          <div class="fa fa-key"></div>
+          <input class="password" type="password" id="senha" autocomplete="off" placeholder="Senha" />
+          <button class="password-button">Mostrar</button>
+        </label>
+        <button class="login-button">Login</button>
+      </form>
     </div>
     <div class="social-buttons">
       <div class="social">
