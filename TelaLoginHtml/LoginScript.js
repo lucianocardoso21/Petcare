@@ -60,13 +60,17 @@ showPasswordButton.addEventListener('click', event => {
   }
 });
 
+/** FORMULARIO DE LOGIN */
 document.getElementById("login-form").addEventListener("submit", function(event) {
   event.preventDefault();
 
-  const cpf = document.getElementById("cpf").value;
+  let cpf = document.getElementById("cpf").value;
   const senha = document.getElementById("senha").value;
 
   // Enviar dados para o backend
+  cpf = cpf.replace(/\D/g, '');
+  const requestData = { cpf, senha }
+  console.log("Enviando dados para o backend:", requestData);
   fetch("http://localhost:1337/login", {
       method: "POST",
       headers: {
