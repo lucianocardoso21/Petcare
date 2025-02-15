@@ -336,7 +336,7 @@ body {
 }
 .center .login .login-button {
   width: calc(100% - 40px);
-  margin: 20px 20px 0;
+  margin: 10px 20px 0;
   outline: none;
   background-color: #243946;
   color: #fff;
@@ -367,7 +367,7 @@ body {
 }
 .center .footer {
   text-align: center;
-  margin-top: 10px;
+  margin-top: 15px;
 }
 
 .delius-regular {
