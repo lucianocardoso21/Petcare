@@ -95,3 +95,11 @@ document.getElementById("login-form").addEventListener("submit", function(event)
       console.error("Erro ao fazer login:", error);
   });
 });
+
+const toggleMostrar = document.querySelector('#botao-mostrar');
+toggleMostrar.addEventListener('click', (evt) => {
+  evt.preventDefault();
+  toggleMostrar.innerText = toggleMostrar.innerText === 'Mostrar' ? 'Ocultar' : 'Mostrar';
+  console.log(toggleMostrar.innerText);
+  
+});
