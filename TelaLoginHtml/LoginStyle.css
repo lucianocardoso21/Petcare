@@ -8,6 +8,7 @@ body {
   background-color: #eeff001e;
   overflow: hidden;
   font-size: 12px;
+  z-index: 0;
 }
 
 .background {
@@ -43,6 +44,27 @@ body {
   font-weight: bold;
   text-align: center;
   text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.7);
+}
+
+.welcome-text footer {
+  font-family: Arial, Helvetica, sans-serif;
+  position: absolute;
+  bottom: 1vh;
+  left: 34vw;
+  color: black;
+  font-size: .8vw;
+  font-weight:lighter;
+  text-align: center;
+  /* position: relative; */
+  z-index: 1000;
+}
+
+.welcome-text footer a {
+  color: purple;
+  cursor: pointer;
+  position: relative;
+  text-decoration: none;
+  z-index: 11;
 }
 
 /* Garante que o formulário não afete o layout */
