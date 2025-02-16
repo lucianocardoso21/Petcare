@@ -25,6 +25,13 @@ const cadastrarCliente = async (req, res) => {
     }
 };
 
+// Tela de Cadastro
+const path = require('path');
+
+const telaDeCadastro = (req, res) => {
+    res.sendFile(path.join(__dirname, '..', '..', '..', 'TelaCadastroHtml', 'Cadastro.html')); // Ajuste o caminho para o arquivo Cadastro.html
+};
+
 const buscarClienteCpf = async (req, res) => {
     try {
         const { cpf } = req.params; // Obtendo CPF via parâmetros de URL
@@ -621,5 +628,6 @@ module.exports = {
     listarMedicamentosPet,
     atualizarMedicamento,
     loginCliente,
+    telaDeCadastro,
     dashboard
 };

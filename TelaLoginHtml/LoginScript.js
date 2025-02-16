@@ -103,3 +103,8 @@ toggleMostrar.addEventListener('click', (evt) => {
   console.log(toggleMostrar.innerText);
   
 });
+
+function abrirCadastro() {
+  window.open('/TelaCadastroHtml/Cadastro.html', '_blank', 'width=600, height=800'); // Ajuste as dimensões conforme necessário
+}
+

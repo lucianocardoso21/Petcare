@@ -5,6 +5,7 @@ const router = express.Router();
 
 /** ROTAS PARA CLIENTES */
 router.post('/clientes', tasksController.cadastrarCliente); // post = criar algo
+router.get('/cadastro', tasksController.telaDeCadastro);
 router.get('/clientes', tasksController.listarClientes);
 router.get('/clientes/contar', tasksController.contarClientes);
 router.patch('/clientes/atualizar/:cpf', tasksController.atualizarCampoCliente); // patch = atualizar um campo especifico
@@ -41,7 +42,7 @@ router.get('/medicamentos/:id', tasksController.buscarMedicamentoId);
 router.patch('/medicamentos/:id', tasksController.atualizarMedicamento);
 router.get('/medicamentos/pet/:id_pet', tasksController.listarMedicamentosPet);
 
-// Rota de login
+// Rota de login e Cadastro
 router.post('/login', tasksController.loginCliente);
 router.get('/dashboard', verificaToken, tasksController.dashboard);
 

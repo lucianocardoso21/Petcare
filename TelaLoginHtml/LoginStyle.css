@@ -5,7 +5,7 @@
 body {
   width: 100vw;
   height: 100vh;
-  background-color: #eeff001e;
+  background-color: #10b10a33;
   overflow: hidden;
   font-size: 12px;
   z-index: 0;
@@ -356,17 +356,29 @@ body {
 .center .login .password-button:active {
   transform: scale(0.95);
 }
-.center .login .login-button {
+.center .login .button-container {
+  display: flex;
+  justify-content: space-between;
   width: calc(100% - 40px);
-  margin: 10px 20px 0;
-  outline: none;
+  margin: 5px 20px 0;
+  gap: 10px;
+}
+
+.center .login .login-button {
+  max-width: 50%;
+  height: 35px;
+  border: none;
+  border-radius: 30px;
   background-color: #243946;
   color: #fff;
   transition: transform 0.1s;
+  outline: none;
 }
+
 .center .login .login-button:active {
   transform: scale(0.95);
 }
+
 .center .social-buttons {
   display: flex;
   justify-content: center;
