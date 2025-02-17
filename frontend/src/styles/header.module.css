@@ -1,0 +1,45 @@
+@import url('https://fonts.googleapis.com/css2?family=Delius&display=swap');
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 30px;
+    background-color: rgba(144, 238, 144, 0.5);
+    color: white;
+    border-bottom: 3px solid green;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .header-content {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .header h1 {
+    font-family: 'Delius';
+    font-weight: bolder;
+    text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+    font-size: 24px;
+    margin: 0;
+    color: green;
+  }
+  
+  .header p {
+    font-family: 'Delius';
+    font-weight: bolder;
+    text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+    color: green;
+    font-size: 16px;
+    margin: 5px 0 0;
+    opacity: 0.9;
+  }
+  
+  .header p::before {
+    content: '📍 ';
+  }
+  
+  .header p::after {
+    content: ' | 🐾 Seu Petcare';
+  }
+  
