@@ -76,16 +76,22 @@ document.getElementById("login-form").addEventListener("submit", function(event)
       headers: {
           "Content-Type": "application/json"
       },
-      body: JSON.stringify({ cpf, senha })
+      body: JSON.stringify(requestData)
   })
-  .then(response => response.json())
+  .then(response => {
+    // Verificar se a resposta é válida
+    if (!response.ok) {
+        throw new Error("Erro ao conectar com o backend");
+    }
+    return response.json();
+  })
   .then(data => {
-      if (data.success) {
+      if (data.success && data.token) {
           // Armazena o token no localStorage (ou sessionStorage)
           localStorage.setItem('authToken', data.token);
 
-          // Redireciona para o dashboard
-          window.location.href = "/dashboard.html"; // Substitua com o URL real do seu dashboard
+          // Redireciona para o dashboard em React
+          window.location.href = "http://localhost:3000"; // Substitua com o URL real do seu dashboard
       } else {
           // Exibe mensagem de erro
           document.getElementById("error-message").style.display = "block";
@@ -93,6 +99,7 @@ document.getElementById("login-form").addEventListener("submit", function(event)
   })
   .catch(error => {
       console.error("Erro ao fazer login:", error);
+      document.getElementById("error-message").style.display = "block";
   });
 });
 

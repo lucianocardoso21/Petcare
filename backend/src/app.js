@@ -6,8 +6,9 @@ const app = express();
 app.use(express.json());
 app.use(cors({
     origin: '*',  // Permite qualquer origem
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],  // Métodos permitidos
-    allowedHeaders: ['Content-Type', 'Authorization'],  // Cabeçalhos permitidos
+    credentials: true,
+    // methods: ['GET', 'POST', 'PUT', 'DELETE'],  // Métodos permitidos
+    // allowedHeaders: ['Content-Type', 'Authorization'],  // Cabeçalhos permitidos
 }));
 app.use(router);
 
