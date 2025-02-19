@@ -5,10 +5,10 @@ const app = express();
 // Middleware para tratar o corpo das requisições como JSON
 app.use(express.json());
 app.use(cors({
-    origin: '*',  // Permite qualquer origem
-    credentials: true,
-    // methods: ['GET', 'POST', 'PUT', 'DELETE'],  // Métodos permitidos
-    // allowedHeaders: ['Content-Type', 'Authorization'],  // Cabeçalhos permitidos
+    origin: '*', // Permite todas as origens (você pode restringir a origens específicas depois)
+    credentials: true, // Permite enviar cookies junto com as requisições
+    allowedHeaders: ['Authorization', 'Content-Type'], // Permite cabeçalhos específicos
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], // Métodos permitidos
 }));
 app.use(router);
 

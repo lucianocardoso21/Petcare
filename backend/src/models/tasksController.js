@@ -584,8 +584,26 @@ const loginCliente = async (req, res) => {
 
 // Controller de autenticação
 const authCliente = (req, res) => {
-    res.status(200).json({ message: 'Usuário autenticado com sucesso!' });
+    const cpf = req.user.cpf;  // Ou, se o CPF estiver em algum outro lugar
+    connection.query('SELECT * FROM CLIENTES WHERE cpf = ?', [cpf], (err, results) => {
+        if (err) {
+            return res.status(500).json({ message: 'Erro ao buscar cliente' });
+        }
+
+        if (results.length > 0) {
+            // Cliente encontrado, enviar os dados
+            const cliente = results[0];
+            res.status(200).json({
+                message: 'Usuário autenticado com sucesso!',
+                nome: cliente.nome,
+                cpf: cliente.cpf
+            });
+        } else {
+            res.status(404).json({ message: 'Cliente não encontrado' });
+        }
+    });
 };
+
   
 // Função para a rota protegida
 const dashboard = (req, res) => {

@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const secretKey = 'password';  // Deve ser a mesma chave usada para gerar o token
 
 const verificarToken = (req, res, next) => {
+    console.log('Middleware de verificação de token chamado');
     const authHeader = req.headers['authorization']; // Obtém o cabeçalho de autorização
     if (!authHeader) {
         console.error('Token não fornecido no cabeçalho de autorização.');
