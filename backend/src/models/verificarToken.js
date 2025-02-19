@@ -1,18 +1,18 @@
 const jwt = require('jsonwebtoken');
 const secretKey = 'password';  // Deve ser a mesma chave usada para gerar o token
 
-const verificaToken = (req, res, next) => {
+const verificarToken = (req, res, next) => {
     const authHeader = req.headers['authorization']; // Obtém o cabeçalho de autorização
     if (!authHeader) {
+        console.error('Token não fornecido no cabeçalho de autorização.');
         return res.status(401).json({ error: 'Token não fornecido' });
     }
 
     const token = authHeader.split(' ')[1];  // Pega o token após 'Bearer'
     if (!token) {
+        console.error('Token não encontrado no cabeçalho de autorização.');
         return res.status(401).json({ error: 'Token não encontrado' });
     }
-
-    // console.log('Token recebido:', token); // Log do token recebido
 
     // Verifica a validade do token
     jwt.verify(token, secretKey, (err, decoded) => {
@@ -27,4 +27,4 @@ const verificaToken = (req, res, next) => {
     });
 };
 
-module.exports = verificaToken;
+module.exports = verificarToken;

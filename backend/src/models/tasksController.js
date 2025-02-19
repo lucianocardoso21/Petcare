@@ -581,6 +581,11 @@ const loginCliente = async (req, res) => {
         return res.status(500).json({ error: 'Erro ao realizar login' });
     }
 };
+
+// Controller de autenticação
+const authCliente = (req, res) => {
+    res.status(200).json({ message: 'Usuário autenticado com sucesso!' });
+};
   
 // Função para a rota protegida
 const dashboard = (req, res) => {
@@ -629,5 +634,6 @@ module.exports = {
     atualizarMedicamento,
     loginCliente,
     telaDeCadastro,
-    dashboard
+    dashboard, 
+    authCliente
 };
