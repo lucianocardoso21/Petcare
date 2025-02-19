@@ -1,46 +1,69 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { verificarAutenticacao } from '@/utils/AuthUtils';
 import Sidebar from '@/components/Sidebar';
 import Header from '@/components/Header';
 
-export default function dashboard() {
-    const [cliente, setCliente] = useState(null);
-    const [pets, setPets] = useState([]);
+export default function Dashboard() {
+  const [cliente, setCliente] = useState(null);
+  const [pets, setPets] = useState([]);
+  const [autenticado, setAutenticado] = useState(null); // Pode ser null inicialmente para saber se estamos verificando
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const clienteId = localStorage.getItem('clienteId'); // ou outro método para obter o ID do cliente logado
-                if (!clienteId) throw new Error('ID do cliente não encontrado');
+  useEffect(() => {
+    const verificarUsuario = async () => {
+      const autenticado = await verificarAutenticacao();
+      setAutenticado(autenticado);
 
-                // Busca o cliente pelo ID
-                const clienteResponse = await fetch(`/clientes/${clienteId}`);
-                if (!clienteResponse.ok)
-                    throw new Error('Erro ao buscar dados do cliente');
-                const clienteData = await clienteResponse.json();
-                setCliente(clienteData);
-
-                // Busca os pets relacionados ao cliente
-                const petsResponse = await fetch('/api/pets');
-                if (!petsResponse.ok)
-                    throw new Error('Erro ao buscar dados dos pets');
-                const petsData = await petsResponse.json();
-                setPets(petsData);
-            } catch (error) {
-                console.error('Erro ao buscar dados:', error);
-            }
-        };
-
+      if (!autenticado) {
+        console.log("Usuário não autenticado, redirecionando...");
+        window.location.href = "/login"; // Redireciona para a página de login
+      } else {
         fetchData();
-    }, []);
+      }
+    };
 
-    return (
-        <div className="dashboard">
-            <div className='flex flex-col flex-1'>
-                <Header/>
-            </div>
-            <div className='flex h-screen'>
-                <Sidebar />
-            </div>
-        </div>
-    );
+    verificarUsuario();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const clienteId = localStorage.getItem('clienteId');
+      if (!clienteId) throw new Error('ID do cliente não encontrado');
+
+      const clienteResponse = await fetch(`/clientes/${clienteId}`);
+      if (!clienteResponse.ok) throw new Error('Erro ao buscar dados do cliente');
+      const clienteData = await clienteResponse.json();
+      setCliente(clienteData);
+
+      const petsResponse = await fetch(`/api/pets?clienteId=${clienteId}`);
+      if (!petsResponse.ok) throw new Error('Erro ao buscar dados dos pets');
+      const petsData = await petsResponse.json();
+      setPets(petsData);
+    } catch (error) {
+      console.error('Erro ao buscar dados:', error);
+    }
+  };
+
+  return (
+    <div className="dashboard">
+      <Header />
+      <Sidebar />
+      {autenticado === null ? (  // Enquanto estamos verificando a autenticação
+        <p>Verificando autenticação...</p>
+      ) : autenticado ? ( // Se estiver autenticado
+        <>
+          <div>
+            <h2>Cliente: {cliente?.nome}</h2>
+            <h3>Pets do Cliente:</h3>
+            <ul>
+              {pets.map(pet => (
+                <li key={pet.id}>{pet.nome}</li>
+              ))}
+            </ul>
+          </div>
+        </>
+      ) : ( // Caso não esteja autenticado
+        <p>Você não está autenticado.</p>
+      )}
+    </div>
+  );
 }
