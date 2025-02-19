@@ -583,15 +583,21 @@ const loginCliente = async (req, res) => {
 };
 
 // Controller de autenticação
-const authCliente = (req, res) => {
-    const cpf = req.user.cpf;  // Ou, se o CPF estiver em algum outro lugar
-    connection.query('SELECT * FROM CLIENTES WHERE cpf = ?', [cpf], (err, results) => {
-        if (err) {
-            return res.status(500).json({ message: 'Erro ao buscar cliente' });
-        }
+const authCliente = async (req, res) => {
+    const cpf = req.user.cpf; 
+
+    // Importa a conexão com o banco
+    const connection = require('./connection'); 
+
+    try {
+        // Testa a conexão com o banco
+        // const [testResults] = await connection.query('SELECT 1');
+        // console.log('Conexão com o banco funcionando:', testResults);
+
+        // Busca o cliente no banco
+        const [results] = await connection.query('SELECT * FROM CLIENTES WHERE cpf = ?', [cpf]);
 
         if (results.length > 0) {
-            // Cliente encontrado, enviar os dados
             const cliente = results[0];
             res.status(200).json({
                 message: 'Usuário autenticado com sucesso!',
@@ -601,9 +607,11 @@ const authCliente = (req, res) => {
         } else {
             res.status(404).json({ message: 'Cliente não encontrado' });
         }
-    });
+    } catch (err) {
+        console.error('Erro ao conectar ou buscar cliente:', err);
+        res.status(500).json({ message: 'Erro interno do servidor' });
+    }
 };
-
   
 // Função para a rota protegida
 const dashboard = (req, res) => {
