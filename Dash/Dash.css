@@ -22,7 +22,7 @@ body {
     justify-content: center;
     background-color: rgba(0, 255, 106, 0.5);
     padding: 20px 20px;
-    border-bottom: 1px solid green;
+    /* border-bottom: 1px solid green; */
     z-index: 1; /* Garantir que o header fique acima da sidebar */
     position: relative; /* Para que o z-index funcione */
     height: 80px; /* Ajuste a altura do header conforme necessário */
@@ -52,9 +52,9 @@ body {
 }
 
 .sidebar {
-    width: 230px;
-    background-color: rgba(128, 0, 128, 0.8);
-    color: white;
+    width: 200px;
+    background-color: rgba(0, 255, 106, 0.5);
+    color: purple;
     padding: 10px 0 0 0;
     position: fixed; /* Sidebar fixa à esquerda */
     top: 80px; /* Empurrar a sidebar para baixo, para não cobrir o header */
@@ -71,7 +71,7 @@ body {
 }
 .sidebar a {
     font-size: 1.5rem;
-    color: white;
+    color: purple;
     text-decoration: none;
     display: block;
     padding: 20px;

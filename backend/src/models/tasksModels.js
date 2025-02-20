@@ -246,27 +246,37 @@ const listarPetId = async (id) => {
 };
 
 /** Listar Pets por CPF do Proprietário */
-const listarPetCpfProp = async (cpf_prop, status = 'todos') => {
+const listarPetCpfProp = async (cpf_prop) => {
     try {
-        if (!cpf_prop) {
-            throw new Error('CPF do proprietário inválido');
-        }
+        const query = `
+            SELECT 
+                pets.id, 
+                pets.nome, 
+                pets.cpf_prop, 
+                pets.proprietario, 
+                pets.especie, 
+                pets.raca, 
+                pets.data_nasc, 
+                pets.peso, 
+                pets.cond_saude, 
+                pets.status
+            FROM pets 
+            WHERE pets.cpf_prop = ?;
+        `;
+        const [result] = await connection.execute(query, [cpf_prop]);
+        console.log('Resultado da query:', result);
+        // Calcular a idade de cada pet usando a função calcularIdade
+        result.forEach(pet => {
+            console.log('Data de nascimento do pet:', pet.data_nasc);
+            pet.idade = calcularIdade(pet.data_nasc);  // Calcula e atribui a idade ao pet
+            console.log('Idade calculada do pet:', pet.idade);
+        });
 
-        let query;
-        let param = [cpf_prop];
-
-        if (status === 'todos') {
-            query = 'SELECT * FROM pets WHERE cpf_prop = ?;';
-        } else {
-            query = 'SELECT * FROM pets WHERE cpf_prop = ? AND status = ?;';
-            param.push(status);
-        }
-
-        const [result] = await connection.execute(query, param);
+        console.log('Resultado da query com idade calculada:', result);
         return result;
     } catch (error) {
-        console.error('Falha ao listar pets do proprietário', error);
-        throw new Error('Erro ao listar pets do proprietário');
+        console.error('Erro ao listar pets por cpf_prop:', error);
+        throw error;
     }
 };
 
@@ -342,13 +352,45 @@ const statusPet = async (id) => {
 const listarPet = async () => {
     try {
         const [result] = await connection.execute(
-            'SELECT * FROM pets;'
+            'SELECT id, nome, cpf_prop, proprietario, especie, raca, data_nasc, peso, cond_saude, status FROM pets;'
         );
-        return result;
+
+        // Adiciona o campo idade ao resultado
+        const petsComIdade = result.map(pet => ({
+            ...pet,
+            idade: calcularIdade(pet.data_nasc)
+        }));
+
+        return petsComIdade;
     } catch (error) {
         console.error('Falha ao listar todos os pets', error);
         throw new Error('Erro ao listar todos os pets');
     }
+};
+
+// Função para calcular a idade a partir da data de nascimento
+function calcularIdade(dataNasc) {
+    const nascimento = new Date(dataNasc);
+    const hoje = new Date();
+    
+    let anos = hoje.getFullYear() - nascimento.getFullYear();
+    let meses = hoje.getMonth() - nascimento.getMonth();
+    
+    // Ajusta o número de anos se o mês atual ainda não tiver passado o mês de nascimento
+    if (meses < 0) {
+        anos--;
+        meses += 12;  // Adiciona 12 meses
+    }
+    
+    // Ajusta os meses caso a data atual seja antes do dia de nascimento no mês
+    const diaNascimento = nascimento.getDate();
+    const diaHoje = hoje.getDate();
+    if (meses === 0 && diaHoje < diaNascimento) {
+        meses = 11;
+        anos--;
+    }
+
+    return `${anos} anos e ${meses} meses`;
 };
 
 const alterarStatusPet = async (id) => {

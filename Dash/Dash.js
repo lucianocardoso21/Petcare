@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", function () {
             document.getElementById('client-name').textContent = cliente.nome;
 
             // Buscar pets do cliente pelo CPF
-            fetch(`http://localhost:1337/clientes/${cliente.cpf}`, {
+            fetch(`http://localhost:1337/pets/prop/${cliente.cpf}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -53,6 +53,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     if (pets.length === 0) {
                         petsList.innerHTML = '<p>Você não possui pets cadastrados.</p>';
                     } else {
+                        console.log('Resposta da API:', pets);
                         pets.forEach(pet => {
                             const petCard = document.createElement('div');
                             petCard.classList.add('card');
