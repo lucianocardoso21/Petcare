@@ -11,7 +11,7 @@ body {
     align-items: center;
     justify-content: center;
     background-color: rgba(0, 255, 106, 0.5);
-    padding: 20px 30px;
+    padding: 10px 20px;
     border-bottom: 1px solid green;
 }
 .header h1{
