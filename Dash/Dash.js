@@ -57,8 +57,16 @@ document.addEventListener("DOMContentLoaded", function () {
                         pets.forEach(pet => {
                             const petCard = document.createElement('div');
                             petCard.classList.add('card');
+                            let icon;
+                            if (pet.especie.toLowerCase() === 'felino') {
+                                icon = '<i class="fas fa-cat"></i>'; // Ícone de gato
+                            } else if (pet.especie.toLowerCase() === 'canino') {
+                                icon = '<i class="fas fa-dog"></i>'; // Ícone de cachorro
+                            } else {
+                                icon = '<i class="fas fa-paw"></i>'; // Ícone genérico de animal
+                            }
                             petCard.innerHTML = `
-                        <h3>${pet.nome}</h3>
+                        <h3>${pet.nome} ${icon}</h3>
                         <p>Espécie: ${pet.especie}</p>
                         <p>Raça: ${pet.raca}</p>
                         <p>Idade: ${pet.idade}</p>
