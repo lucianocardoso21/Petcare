@@ -1,16 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Delius&display=swap');
+
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Delius';
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 .header {
-    background-color: #4CAF50;
-    color: white;
-    padding: 15px;
-    text-align: center;
-    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 255, 106, 0.5);
+    padding: 20px 30px;
+    border-bottom: 1px solid green;
 }
+.header h1{
+    font-size:1.7rem;
+    font-weight: bold;
+    color: purple;
+    /* box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 4px; */
+}
+/* .header h2{
+    font-size: 1rem;
+    font-weight: bold;
+    color: purple;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 4px;
+} */
+
 .container {
     display: flex;
     flex-direction: row;

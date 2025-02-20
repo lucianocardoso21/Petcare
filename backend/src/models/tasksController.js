@@ -13,10 +13,10 @@ const responderComSucesso = (res, data) => {
 const cadastrarCliente = async (req, res) => {
     try {
         // Pegando os dados do corpo da requisição (JSON)
-        const { cpf, senha, nome, celular, endereco } = req.body;
+        const { cpf, senha, nome, sobrenome, celular, endereco } = req.body;
         
         // Chama o model para cadastrar o cliente
-        const cliente = await tasksModels.cadastrarCliente(cpf, senha, nome, celular, endereco);
+        const cliente = await tasksModels.cadastrarCliente(cpf, senha, nome, sobrenome, celular, endereco);
 
         // Envia resposta de sucesso
         responderComSucesso(res, cliente);

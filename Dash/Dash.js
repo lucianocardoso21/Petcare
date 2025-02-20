@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Buscar dados do cliente
-    console.log('Fazendo requisição para /auth');
+    // console.log('Fazendo requisição para /auth');
     fetch('http://localhost:1337/auth', {
         method: 'GET',
         headers: {
@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     })
         .then(response => {
-            console.log('Resposta da requisição /auth recebida', response);
+            // console.log('Resposta da requisição /auth recebida', response);
 
             if (!response.ok) {
                 throw new Error('Erro ao buscar dados do cliente');
@@ -24,10 +24,10 @@ document.addEventListener("DOMContentLoaded", function () {
         })
         .then(cliente => {
             // Log para verificar os dados retornados pela API de autenticação
-            console.log('Cliente carregado:', cliente);  // Verifique o conteúdo da resposta da API
+            // console.log('Cliente carregado:', cliente);  // Verifique o conteúdo da resposta da API
 
             // Verifique especificamente o CPF do cliente
-            console.log('CPF do cliente:', cliente.cpf);  // Verifique se o CPF está presente e correto
+            // console.log('CPF do cliente:', cliente.cpf);  // Verifique se o CPF está presente e correto
 
 
             document.getElementById('client-name').textContent = cliente.nome;

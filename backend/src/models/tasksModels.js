@@ -1,18 +1,18 @@
 const connection = require('./connection');
-const jwt = require('jsonwebtoken');
+// const jwt = require('jsonwebtoken');
 
 
 /** Cadastrar Cliente */
-const cadastrarCliente = async (cpf, senha, nome, celular, endereco) => {
+const cadastrarCliente = async (cpf, senha, nome, sobrenome, celular, endereco) => {
     try {
         // Validação de dados
-        if (!cpf || !senha || !nome || !celular || !endereco) {
+        if (!cpf || !senha || !nome || !sobrenome || !celular || !endereco) {
             throw new Error('Dados inválidos para cadastro de cliente');
         }
 
         const query = await connection.execute(
-            'INSERT INTO clientes(cpf, senha, nome, celular, endereco, data_entrada) VALUES (?, ?, ?, ?, ?, NOW());',
-            [cpf, senha, nome, celular, endereco]
+            'INSERT INTO clientes(cpf, senha, nome, sobrenome, celular, endereco, data_entrada) VALUES (?, ?, ?, ?, ?, ?, NOW());',
+            [cpf, senha, nome, sobrenome, celular, endereco]
         );
         return query;
     } catch (error) {
