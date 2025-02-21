@@ -347,7 +347,6 @@ const statusPet = async (id) => {
     }
 };
 
-
 /** Listar Todos os Pets */
 const listarPet = async () => {
     try {

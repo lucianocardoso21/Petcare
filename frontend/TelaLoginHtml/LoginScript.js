@@ -91,7 +91,7 @@ document.getElementById("login-form").addEventListener("submit", function(event)
           localStorage.setItem('authToken', data.token);
 
           // Redireciona para o dashboard em React
-          window.location.href = "http://127.0.0.1:5500/Dash/Dash.html"; // Substitua com o URL real do seu dashboard
+          window.location.href = "http://127.0.0.1:5500/frontend/Dash/Dash.html"; // Substitua com o URL real do seu dashboard
       } else {
           // Exibe mensagem de erro
           document.getElementById("error-message").style.display = "block";

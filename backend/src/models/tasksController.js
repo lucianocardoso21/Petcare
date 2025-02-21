@@ -32,6 +32,7 @@ const telaDeCadastro = (req, res) => {
     res.sendFile(path.join(__dirname, '..', '..', '..', 'TelaCadastroHtml', 'Cadastro.html')); // Ajuste o caminho para o arquivo Cadastro.html
 };
 
+// CLIENTES
 const buscarClienteCpf = async (req, res) => {
     try {
         const { cpf } = req.params; // Obtendo CPF via parâmetros de URL

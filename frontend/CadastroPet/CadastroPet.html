@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <title>Document</title>
+</head>
+
+<body>
+    <h2>Cadastrar Pet</h2>
+    <form class="container" id="pet-form">
+        <div class="row">
+            <input class="form-control col" class="form-control" type="text" id="nome" placeholder="Nome do Pet" required>
+            <input class="form-control col" type="text" id="cpf_prop" placeholder="CPF do Proprietário" required>
+            <input class="form-control col" type="text" id="proprietario" placeholder="Nome do Proprietário" required>
+        </div>
+        <div class="border p-0 w-25 d-flex flex-column">
+            <p>Espécie</p><hr>
+            <div>
+                <input class="form-check-input" type="radio" name="checkbutton_especie" id="cb_especie" required>
+                <label class="form-check-label" for="checkbutton_especie">Canino</label>
+            </div>
+            <div>
+                <input class="form-check-input" type="radio" name="checkbutton_especie" id="cb_especie" required>
+                <label class="form-check-label" for="checkbutton_especie">Felino</label>
+            </div>
+            <div>
+                <input class="form-check-input" type="radio" name="checkbutton_especie" id="cb_especie" required>
+                <label class="form-check-label" for="checkbutton_especie">Outro</label>
+            </div>
+        </div>
+        <input class="form-control" type="text" id="raca" placeholder="Raça" required>
+        <input class="form-control" type="date" id="data_nasc" required>
+        <input class="form-control" type="number" id="peso" placeholder="Peso (kg)" required>
+        <input class="form-control" type="text" id="cond_saude" placeholder="Condição de Saúde" required>
+        <button type="submit">Cadastrar</button>
+    </form>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+</html>
