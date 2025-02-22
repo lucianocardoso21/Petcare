@@ -1,4 +1,4 @@
-.botao {
+.main-content .botao {
     font-family: 'Delius', sans-serif;
     padding: 10px;
     background-color: purple;
@@ -10,11 +10,12 @@
     transition: background-color 0.3s ease;
 }
 
-button:hover {
+.main-content button:hover {
     background-color: #0fb10a;
 }
 
-h2 {
+.main-content h2 {
     font-family: 'Delius', 'Helvetica Neue', Helvetica, Arial;
     color: purple;
+    text-align: center;
 }

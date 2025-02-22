@@ -8,7 +8,8 @@
     integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="Dash.css">
-    <title>Document</title>
+    <link rel="stylesheet" href="../CadastroPet/CadastroPet.css">
+    <title>Petcare Dashboard</title>
 </head>
 
 <body>
@@ -23,14 +24,14 @@
         <!-- SIDEBAR -->
         <div class="sidebar">
             <h2>Menu</h2>
-            <a href="#">Home</a>
+            <a href="Dash.html">Home</a>
             <a href="#">Perfil</a>
-            <a href="#">Cadastrar Pet</a>
+            <a href="#" id="cadastro-pet-btn">Cadastrar Pet</a>
             <a href="#">Logout</a>
         </div>
         <!-- MAIN -->
         <div class="main-content">
-            <h2>Seus Pets</h2>
+            <h2 id="seus-pets">Seus Pets</h2>
             <div id="pets-list">
                 <p>Carregando pets...</p>
             </div>

@@ -17,6 +17,8 @@ body {
     overflow-x: hidden;
 }
 .header {
+    width: 100vw;
+    position: fixed;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -24,7 +26,6 @@ body {
     padding: 20px 20px;
     /* border-bottom: 1px solid green; */
     z-index: 1; /* Garantir que o header fique acima da sidebar */
-    position: relative; /* Para que o z-index funcione */
     height: 80px; /* Ajuste a altura do header conforme necessário */
 }
 .header h1{
@@ -85,9 +86,13 @@ body {
 
 .main-content {
     flex-grow: 1;
-    padding: 0;
-    margin-right: 3vw;
+    padding-top: 5vh;
+    margin: 10vh 3vw 0 -1vw;
     overflow-x: hidden;
+}
+
+.main-content #seus-pets {
+    text-align: start;
 }
 .card {
     width: 300px;
