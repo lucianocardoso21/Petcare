@@ -16,7 +16,7 @@ body {
   z-index: -1;
   width: 100vw;
   height: 100vh;
-  background-image: url('/TelaLoginHtml/img/bg-cat.png');
+  background-image: url('/frontend/TelaLoginHtml/img/bg-cat.png');
   background-size: 67vw 100vh; 
   background-position: 0px 0px; 
   background-repeat: no-repeat;

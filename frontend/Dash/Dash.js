@@ -77,8 +77,23 @@ document.addEventListener("DOMContentLoaded", function () {
             console.error('Erro ao carregar dados do cliente:', error);
             window.location.href = '/login.html';
         });
-});    
+});
 
+/** FORMULARIO DE CADASTRO */
 document.addEventListener("DOMContentLoaded", function () {
     formularioCadastro(); // Carregar formulário de cadastro de pets
 });
+
+/** LOGOUT */
+document.addEventListener("DOMContentLoaded", function () {
+    const logoutBtn = document.querySelector('#logout');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', (evt) => {
+            evt.preventDefault();
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('cpf');
+            localStorage.removeItem('proprietario');
+            window.location.href = '/frontend/TelaLoginHtml/Login.html';
+        })
+    }
+})

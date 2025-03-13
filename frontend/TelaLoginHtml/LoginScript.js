@@ -3,6 +3,13 @@
   By: Neo
   Link: https://dribbble.com/shots/4485321-Login-Page-Homepage
 */
+document.addEventListener("DOMContentLoaded", function () {
+  let cpfInput = document.getElementById("cpf");
+  let senhaInput = document.getElementById("senha");
+
+  if (cpfInput) cpfInput.value = "";
+  if (senhaInput) senhaInput.value = "";
+});
 
 let usernameInput = document.querySelector('.username');
 let passwordInput = document.querySelector('.password');
@@ -64,11 +71,11 @@ showPasswordButton.addEventListener('click', event => {
 document.getElementById("login-form").addEventListener("submit", function(event) {
   event.preventDefault();
 
-  let cpf = document.getElementById("cpf").value;
+  let cpf = document.getElementById("cpf").value.replace(/\D/g, '');
   const senha = document.getElementById("senha").value;
 
   // Enviar dados para o backend
-  cpf = cpf.replace(/\D/g, '');
+  // cpf = cpf.replace(/\D/g, '');
   const requestData = { cpf, senha }
   console.log("Enviando dados para o backend:", requestData);
   fetch("http://localhost:1337/login", {
@@ -102,6 +109,8 @@ document.getElementById("login-form").addEventListener("submit", function(event)
       console.error("Erro ao fazer login:", error);
       document.getElementById("error-message").style.display = "block";
   });
+  document.querySelector("#cpf").value = '';
+  document.querySelector("#senha").value = '';
 });
 
 const toggleMostrar = document.querySelector('#botao-mostrar');
@@ -113,6 +122,6 @@ toggleMostrar.addEventListener('click', (evt) => {
 });
 
 function abrirCadastro() {
-  window.open('/TelaCadastroHtml/Cadastro.html', '_blank', 'width=600, height=800'); // Ajuste as dimensões conforme necessário
+  window.open('../TelaCadastroHtml/Cadastro.html', '_blank', 'width=600, height=800'); // Ajuste as dimensões conforme necessário
 }
 
