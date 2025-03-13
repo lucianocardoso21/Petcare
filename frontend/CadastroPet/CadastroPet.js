@@ -100,6 +100,7 @@ export function formularioCadastro() {
                 console.log(data);
                 if (data[0] && data[0].affectedRows === 1) {
                     alert('Pet cadastrado com sucesso!');
+                    window.location.href = "Dash.html";
                     // Você pode limpar o formulário ou redirecionar o usuário
                     mainContent.innerHTML = ''; // Limpar o conteúdo da tela
                 } else {
