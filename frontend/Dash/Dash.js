@@ -1,3 +1,4 @@
+import { formularioCadastro } from '../CadastroPet/CadastroPet.js'
 document.addEventListener("DOMContentLoaded", function () {
     const token = localStorage.getItem('authToken');
     if (!token) {
@@ -88,61 +89,5 @@ document.addEventListener("DOMContentLoaded", function () {
 });    
 
 document.addEventListener("DOMContentLoaded", function () {
-    const cadastroPetBtn = document.getElementById("cadastro-pet-btn");
-    const mainContent = document.querySelector(".main-content");
-
-    cadastroPetBtn.addEventListener("click", function (event) {
-        event.preventDefault(); // Impede o comportamento padrão do link
-
-        // HTML do formulário de cadastro
-        mainContent.innerHTML = `
-            <h2>Cadastrar Pet</h2>
-            <form id="pet-form">
-                <div class="mb-3">
-                    <label class="form-label">Nome do Pet:</label>
-                    <input class="form-control" type="text" id="nome" placeholder="Nome do Pet" required>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Proprietário:</label>
-                    <input class="form-control" type="text" id="proprietario" placeholder="Nome do Proprietário" required>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">CPF:</label>
-                    <input class="form-control" type="text" id="cpf_prop" placeholder="CPF do Proprietário" required>
-                </div>
-                <div class="border p-3 rounded-lg mb-3">
-                    <p class="font-semibold mb-2">Espécie:</p>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="especie" id="canino" required>
-                        <label class="form-check-label" for="canino">Canino</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="especie" id="felino" required>
-                        <label class="form-check-label" for="felino">Felino</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="especie" id="outro" required>
-                        <label class="form-check-label" for="outro">Outro</label>
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Raça:</label>
-                    <input class="form-control" type="text" id="raca" placeholder="Raça" required>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Data de Nascimento:</label>
-                    <input class="form-control" type="date" id="data_nasc" required>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Peso (kg):</label>
-                    <input class="form-control" type="number" id="peso" placeholder="Peso" required>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Condição de Saúde:</label>
-                    <textarea class="form-control" type="text" id="cond_saude" placeholder="Condição de Saúde" required></textarea>
-                </div>
-                <button class="botao w-100" type="submit">Cadastrar</button>
-            </form>
-        `;
-    });
+    formularioCadastro(); // Carregar formulário de cadastro de pets
 });

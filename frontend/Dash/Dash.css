@@ -22,7 +22,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: rgba(0, 255, 106, 0.5);
+    background-color: #7cfbb4;
     padding: 20px 20px;
     /* border-bottom: 1px solid green; */
     z-index: 1; /* Garantir que o header fique acima da sidebar */
@@ -47,14 +47,13 @@ body {
     flex-direction: row;
     min-height: 100vh;
     margin-left: 250px; /* Deixar espaço para a sidebar */
-    padding-left: 20px;
-    padding-top: 20px; /* Para garantir que o conteúdo não sobreponha o header */
+    padding: 1.04% 2.08% 0.93% 2.04%;
     overflow-x: hidden;
 }
 
 .sidebar {
     width: 200px;
-    background-color: rgba(0, 255, 106, 0.5);
+    background-color: #7cfbb4;
     color: purple;
     padding: 10px 0 0 0;
     position: fixed; /* Sidebar fixa à esquerda */
