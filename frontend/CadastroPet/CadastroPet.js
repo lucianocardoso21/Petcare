@@ -68,12 +68,15 @@ export function formularioCadastro() {
             }
 
             // Capturar o CPF do proprietário (assumindo que está armazenado no localStorage após login)
-            const cpfProp = localStorage.getItem("cpf"); 
+            const cpfProp = localStorage.getItem("cpf");
+            const proprietario = localStorage.getItem("proprietario"); 
+            // const proprietario = 
 
             // Preparar os dados do pet para envio ao backend
             const petData = {
                 nome: nomePet,
                 cpf_prop: cpfProp,
+                proprietario: proprietario,
                 especie: especie,
                 raca: raca,
                 data_nasc: dataNasc,
@@ -82,9 +85,10 @@ export function formularioCadastro() {
                 status: 'ativo',
                 data_alteracao: new Date().toISOString()
             };
+            console.log('Dados enviados para o backend:', JSON.stringify(petData)); // Verifica os dados antes de enviar
 
             // Enviar os dados ao servidor via fetch
-            fetch('/pets', {
+            fetch('http://localhost:1337/pets', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -93,7 +97,8 @@ export function formularioCadastro() {
             })
             .then(response => response.json())
             .then(data => {
-                if (data.success) {
+                console.log(data);
+                if (data[0] && data[0].affectedRows === 1) {
                     alert('Pet cadastrado com sucesso!');
                     // Você pode limpar o formulário ou redirecionar o usuário
                     mainContent.innerHTML = ''; // Limpar o conteúdo da tela

@@ -89,6 +89,7 @@ document.getElementById("login-form").addEventListener("submit", function(event)
       if (data.success && data.token) {
           // Armazena o token no localStorage (ou sessionStorage)
           localStorage.setItem('authToken', data.token);
+          localStorage.setItem('cpf', cpf);
 
           // Redireciona para o dashboard em React
           window.location.href = "http://127.0.0.1:5500/frontend/Dash/Dash.html"; // Substitua com o URL real do seu dashboard
