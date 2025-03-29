@@ -49,6 +49,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         pets.forEach(pet => {
                             const petCard = document.createElement('div');
                             petCard.classList.add('card');
+                            petCard.dataset.petId = pet.id;
                             let icon;
                             if (pet.especie.toLowerCase() === 'felino') {
                                 icon = '<i class="fas fa-cat"></i>'; // Ícone de gato
@@ -63,6 +64,9 @@ document.addEventListener("DOMContentLoaded", function () {
                         <p>Raça: ${pet.raca}</p>
                         <p>Idade: ${pet.idade}</p>
                     `;
+                            petCard.addEventListener('click', () => {
+                                window.open(`../Detalhes_pet/Detalhes_pet.html?id=${pet.id}`, '_blank');
+                            });
                             petsList.appendChild(petCard);
                         });
                     }

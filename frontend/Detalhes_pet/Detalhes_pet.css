@@ -1,0 +1,45 @@
+.pet-details-container {
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 20px;
+}
+.section-card {
+    margin-bottom: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    padding: 20px;
+}
+.pet-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+}
+.info-item {
+    margin-bottom: 10px;
+}
+.info-label {
+    font-weight: bold;
+    color: #555;
+}
+.medication-card, .vaccine-card, .procedure-card {
+    border-left: 4px solid #4e73df;
+    padding: 15px;
+    margin-bottom: 15px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+}
+.active-medication {
+    border-left-color: #1cc88a;
+}
+.expired-vaccine {
+    border-left-color: #e74a3b;
+}
+.tab-content {
+    padding: 20px 0;
+}
