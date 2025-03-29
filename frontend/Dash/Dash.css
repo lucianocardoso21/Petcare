@@ -27,6 +27,7 @@ body {
     /* border-bottom: 1px solid green; */
     z-index: 1; /* Garantir que o header fique acima da sidebar */
     height: 80px; /* Ajuste a altura do header conforme necessário */
+    box-shadow: 0px -2px 20px rgba(0,0,0,0.5);
 }
 .header h1{
     padding-top: 4vh;
@@ -55,6 +56,7 @@ body {
     left: 0;
     height: calc(100vh - 80px); /* Ajuste a altura para o restante da tela, sem cobrir o header */
     z-index: 999;
+    box-shadow: 3px 10px 10px rgba(0, 0, 0, 0.301);
 }
 
 .sidebar h2 {
