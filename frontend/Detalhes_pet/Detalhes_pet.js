@@ -57,10 +57,11 @@ document.addEventListener("DOMContentLoaded", function () {
             petIcon.innerHTML = '<i class="fas fa-paw fa-2x"></i>';
         }
         
-        // Campos básicos (mesma estrutura do dash.js)
+        // Campos básicos
         document.getElementById('pet-species').textContent = pet.especie || 'Não informado';
         document.getElementById('pet-breed').textContent = pet.raca || 'Não informado';
-        document.getElementById('pet-age').textContent = pet.idade || 'Não informado'; // EXATAMENTE como no dash.js
+        document.getElementById('pet-age').textContent = pet.idade || 'Não informado'; 
+        document.getElementById('pet-weight').textContent = pet.peso || 'Não informado'; 
         
         // Buscar informações adicionais
         return Promise.all([

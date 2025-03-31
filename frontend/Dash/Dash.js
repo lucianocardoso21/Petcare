@@ -63,6 +63,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         <p>Espécie: ${pet.especie}</p>
                         <p>Raça: ${pet.raca}</p>
                         <p>Idade: ${pet.idade}</p>
+                        <p>Status: ${pet.status}</p>
                     `;
                             petCard.addEventListener('click', () => {
                                 window.open(`../Detalhes_pet/Detalhes_pet.html?id=${pet.id}`, '_blank');
