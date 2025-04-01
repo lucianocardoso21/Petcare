@@ -1,4 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById('btn-voltar').addEventListener('click', function() {
+        window.close();
+    });
     // Função para formatar datas
     function formatDate(dateString) {
         if (!dateString) return "Não informada";
