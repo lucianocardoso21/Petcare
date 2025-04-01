@@ -419,17 +419,20 @@ const alterarStatusPet = async (id) => {
 /** Cadastrar Vacina */
 const cadastrarVacina = async (nome, fabricante, lote, validade, id_pet, data_aplicacao, veterinario, prox_aplicacao) => {
     try {
+        console.log('📌 Dados recebidos no modelo:', { nome, fabricante, lote, validade, id_pet, data_aplicacao, veterinario, prox_aplicacao });
+
         // Executa a query de inserção no banco de dados
-        const query = await connection.execute(
+        const [result] = await connection.execute(
             'INSERT INTO vacinas (nome, fabricante, lote, validade, id_pet, data_aplicacao, veterinario, prox_aplicacao) ' +
             'VALUES (?, ?, ?, ?, ?, ?, ?, ?);',
             [nome, fabricante, lote, validade, id_pet, data_aplicacao, veterinario, prox_aplicacao]
         );
 
-        return query;
+        console.log('✅ Vacina cadastrada no banco:', result);
+        return result;
     } catch (error) {
-        console.error('Falha ao cadastrar vacina', error);
-        throw new Error('Erro ao cadastrar vacina');
+        console.error('❌ Erro ao cadastrar vacina:', error.message);
+        throw error;
     }
 };
 

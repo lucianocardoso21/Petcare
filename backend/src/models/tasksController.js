@@ -280,17 +280,20 @@ const cadastrarVacina = async (req, res) => {
     try {
         const { nome, fabricante, lote, validade, id_pet, data_aplicacao, veterinario, prox_aplicacao } = req.body;
 
-        // Validação dos campos obrigatórios
+        console.log('📌 Dados recebidos no controlador:', req.body);
+
         if (!nome || !lote || !validade || !id_pet || !data_aplicacao || !veterinario) {
+            console.warn('⚠️ Campos obrigatórios faltando.');
             return res.status(400).json({ error: 'Todos os campos obrigatórios devem ser preenchidos.' });
         }
 
         // Chama o modelo para cadastrar a vacina
         const result = await tasksModels.cadastrarVacina(nome, fabricante, lote, validade, id_pet, data_aplicacao, veterinario, prox_aplicacao);
 
+        console.log('✅ Resposta do modelo:', result);
         return res.status(201).json({ success: 'Vacina cadastrada com sucesso', result });
     } catch (error) {
-        console.error('Erro ao cadastrar vacina', error);
+        console.error('❌ Erro no controlador ao cadastrar vacina:', error.message);
         return res.status(500).json({ error: 'Erro ao cadastrar vacina' });
     }
 };
