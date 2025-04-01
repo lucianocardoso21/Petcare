@@ -115,19 +115,24 @@ document.addEventListener("DOMContentLoaded", function () {
                 itemDiv.innerHTML = `
                     <strong>${item.nome || 'Sem nome'}</strong><br>
                     <small>Fabricante: ${item.fabricante || 'Não informado'}</small><br>
+                    <small>Lote: ${item.lote || 'Não informado'}</small><br>
+                    <small>Validade: ${formatDate(item.validade)}</small><br>
+                    <small>Data de aplicação: ${formatDate(item.data_aplicacao)}</small><br>
+                    <small>Veterinário: ${item.veterinario || 'Não informado'}</small><br>
                     <small>Próxima dose: ${formatDate(item.prox_aplicacao) || 'Não informada'}</small>
                 `;
             } else if (apiEndpoint === 'procedimentos') {
                 itemDiv.innerHTML = `
                     <strong>${item.tipo || 'Sem tipo'}</strong><br>
                     <small>${item.descricao || 'Sem descrição'}</small><br>
-                    <small>Data: ${formatDate(item.data_procedimento) || 'Não informada'}</small>
+                    <small>Data: ${formatDate(item.data_procedimento) || 'Não informada'}</small><br>
+                    <small>Veterinário: ${item.veterinario || 'Não informado'}</small>
                 `;
             }
 
             // Container para os botões
             const buttonContainer = document.createElement('div');
-            buttonContainer.className = 'd-flex gap-2 mt-3'; // Flexbox com espaçamento
+            buttonContainer.className = 'd-flex gap-2 mt-3';
             
             // Botão Editar
             const editButton = document.createElement('button');
@@ -143,11 +148,8 @@ document.addEventListener("DOMContentLoaded", function () {
             deleteButton.textContent = 'Remover';
             deleteButton.onclick = () => deleteItem(item.id, apiEndpoint);
             
-            // Adiciona botões ao container
             buttonContainer.appendChild(editButton);
             buttonContainer.appendChild(deleteButton);
-            
-            // Adiciona container ao item
             itemDiv.appendChild(buttonContainer);
             section.appendChild(itemDiv);
         });
