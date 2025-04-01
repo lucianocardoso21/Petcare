@@ -45,6 +45,6 @@
     padding: 20px 0;
 }
 
-#btn-editar {
+#btn-editar, #btn-remover {
     width: 100px;
 }

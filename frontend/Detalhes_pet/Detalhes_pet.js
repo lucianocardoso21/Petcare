@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", function () {
             return date.toLocaleDateString('pt-BR');
         } catch (e) {
             console.error("Erro ao formatar data:", e);
-            return dateString; // Retorna o valor original se falhar
+            return dateString;
         }
     }
 
@@ -37,16 +37,13 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     })
     .then(response => {
-        if (!response.ok) {
-            throw new Error('Erro ao buscar pets');
-        }
+        if (!response.ok) throw new Error('Erro ao buscar pets');
         return response.json();
     })
     .then(pets => {
         const pet = pets.find(p => p.id == petId);
         if (!pet) throw new Error('Pet não encontrado');
 
-        // Preenche os dados básicos do pet
         document.getElementById('pet-name').textContent = pet.nome || 'Não informado';
         const petIcon = document.getElementById('pet-icon');
         petIcon.innerHTML = pet.especie.toLowerCase() === 'felino' 
@@ -60,44 +57,19 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById('pet-age').textContent = pet.idade || 'Não informado'; 
         document.getElementById('pet-weight').textContent = pet.peso || 'Não informado'; 
         
-        // Busca informações adicionais em paralelo
         return Promise.all([
             fetch(`http://localhost:1337/medicamentos/pet/${petId}`, {
                 headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
-            }).then(res => {
-                if (!res.ok) throw new Error('Erro ao buscar medicamentos');
-                return res.json();
-            }).catch(error => {
-                console.error('Erro ao buscar medicamentos:', error);
-                return [];
-            }),
-
+            }).then(res => res.ok ? res.json() : Promise.reject('Erro ao buscar medicamentos')).catch(() => []),
             fetch(`http://localhost:1337/vacinas/pet/${petId}`, {
                 headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
-            }).then(res => {
-                if (!res.ok) throw new Error('Erro ao buscar vacinas');
-                return res.json();
-            }).catch(error => {
-                console.error('Erro ao buscar vacinas:', error);
-                return [];
-            }),
-
+            }).then(res => res.ok ? res.json() : Promise.reject('Erro ao buscar vacinas')).catch(() => []),
             fetch(`http://localhost:1337/procedimentos/pet/${petId}`, {
                 headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
-            }).then(res => {
-                if (!res.ok) throw new Error('Erro ao buscar procedimentos');
-                return res.json();
-            }).catch(error => {
-                console.error('Erro ao buscar procedimentos:', error);
-                return [];
-            })
+            }).then(res => res.ok ? res.json() : Promise.reject('Erro ao buscar procedimentos')).catch(() => [])
         ]);
     })
     .then(([medicamentos, vacinas, procedimentos]) => {
-        console.log('Medicamentos:', medicamentos);
-        console.log('Vacinas:', vacinas);
-        console.log('Procedimentos:', procedimentos);
-        
         fillSection('medications-list', medicamentos, 'medication', 'Nenhuma medicação registrada.', 'medicamentos');
         fillSection('vaccines-list', vacinas, 'vaccine', 'Nenhuma vacina registrada.', 'vacinas');
         fillSection('procedures-list', procedimentos, 'procedure', 'Nenhum procedimento registrado.', 'procedimentos');
@@ -114,7 +86,6 @@ document.addEventListener("DOMContentLoaded", function () {
         const section = document.getElementById(sectionId);
         section.innerHTML = '';
 
-        // Botão de adicionar
         const addButton = document.createElement('button');
         addButton.className = 'btn btn-success mb-3';
         addButton.textContent = 'Adicionar';
@@ -154,19 +125,30 @@ document.addEventListener("DOMContentLoaded", function () {
                 `;
             }
 
+            // Container para os botões
+            const buttonContainer = document.createElement('div');
+            buttonContainer.className = 'd-flex gap-2 mt-3'; // Flexbox com espaçamento
+            
+            // Botão Editar
             const editButton = document.createElement('button');
-            editButton.className = 'btn btn-warning btn-sm mt-2 me-2';
+            editButton.id = 'btn-editar';
+            editButton.className = 'btn btn-warning btn-sm';
             editButton.textContent = 'Editar';
             editButton.onclick = () => openForm(item, apiEndpoint);
-            itemDiv.appendChild(editButton);
-
-            // Botão de remover
+            
+            // Botão Remover
             const deleteButton = document.createElement('button');
-            deleteButton.className = 'btn btn-danger btn-sm mt-2';
+            deleteButton.id = 'btn-remover';
+            deleteButton.className = 'btn btn-danger btn-sm';
             deleteButton.textContent = 'Remover';
             deleteButton.onclick = () => deleteItem(item.id, apiEndpoint);
-            itemDiv.appendChild(deleteButton);
-
+            
+            // Adiciona botões ao container
+            buttonContainer.appendChild(editButton);
+            buttonContainer.appendChild(deleteButton);
+            
+            // Adiciona container ao item
+            itemDiv.appendChild(buttonContainer);
             section.appendChild(itemDiv);
         });
     }
@@ -342,11 +324,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 body: JSON.stringify(formData)
             })
             .then(response => {
-                if (!response.ok) {
-                    return response.json().then(err => { 
-                        throw new Error(err.message || 'Erro na requisição');
-                    });
-                }
+                if (!response.ok) throw new Error(response.statusText);
                 return response.json();
             })
             .then(() => {
