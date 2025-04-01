@@ -17,11 +17,12 @@
 }
 .info-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 15px;
 }
 .info-item {
     margin-bottom: 10px;
+    overflow-wrap: break-word;
 }
 .info-label {
     font-weight: bold;
