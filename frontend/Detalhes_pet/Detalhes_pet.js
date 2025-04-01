@@ -124,6 +124,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             const editButton = document.createElement('button');
+            editButton.id = 'btn-editar';
             editButton.className = 'btn btn-warning btn-sm mt-2';
             editButton.textContent = 'Editar';
             editButton.onclick = () => openForm(item, apiEndpoint);

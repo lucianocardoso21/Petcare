@@ -44,3 +44,7 @@
 .tab-content {
     padding: 20px 0;
 }
+
+#btn-editar {
+    width: 100px;
+}
