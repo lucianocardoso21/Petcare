@@ -1,4 +1,16 @@
 document.addEventListener("DOMContentLoaded", function () {
+    // Função para formatar datas
+    function formatDate(dateString) {
+        if (!dateString) return "Não informada";
+        try {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('pt-BR');
+        } catch (e) {
+            console.error("Erro ao formatar data:", e);
+            return dateString; // Retorna o valor original se falhar
+        }
+    }
+
     const token = localStorage.getItem('authToken');
     if (!token) {
         window.location.href = '/login.html';
@@ -24,11 +36,17 @@ document.addEventListener("DOMContentLoaded", function () {
             'Content-Type': 'application/json'
         }
     })
-    .then(response => response.ok ? response.json() : Promise.reject('Erro ao buscar pets'))
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Erro ao buscar pets');
+        }
+        return response.json();
+    })
     .then(pets => {
         const pet = pets.find(p => p.id == petId);
         if (!pet) throw new Error('Pet não encontrado');
 
+        // Preenche os dados básicos do pet
         document.getElementById('pet-name').textContent = pet.nome || 'Não informado';
         const petIcon = document.getElementById('pet-icon');
         petIcon.innerHTML = pet.especie.toLowerCase() === 'felino' 
@@ -42,27 +60,37 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById('pet-age').textContent = pet.idade || 'Não informado'; 
         document.getElementById('pet-weight').textContent = pet.peso || 'Não informado'; 
         
+        // Busca informações adicionais em paralelo
         return Promise.all([
             fetch(`http://localhost:1337/medicamentos/pet/${petId}`, {
                 headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
             }).then(res => {
                 if (!res.ok) throw new Error('Erro ao buscar medicamentos');
                 return res.json();
-            }).catch(() => []),
+            }).catch(error => {
+                console.error('Erro ao buscar medicamentos:', error);
+                return [];
+            }),
 
             fetch(`http://localhost:1337/vacinas/pet/${petId}`, {
                 headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
             }).then(res => {
                 if (!res.ok) throw new Error('Erro ao buscar vacinas');
                 return res.json();
-            }).catch(() => []),
+            }).catch(error => {
+                console.error('Erro ao buscar vacinas:', error);
+                return [];
+            }),
 
             fetch(`http://localhost:1337/procedimentos/pet/${petId}`, {
                 headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
             }).then(res => {
                 if (!res.ok) throw new Error('Erro ao buscar procedimentos');
                 return res.json();
-            }).catch(() => [])
+            }).catch(error => {
+                console.error('Erro ao buscar procedimentos:', error);
+                return [];
+            })
         ]);
     })
     .then(([medicamentos, vacinas, procedimentos]) => {
@@ -108,41 +136,73 @@ document.addEventListener("DOMContentLoaded", function () {
                 itemDiv.innerHTML = `
                     <strong>${item.nome_medicamento || 'Sem nome'}</strong><br>
                     <small>Dosagem: ${item.dosagem || 'Não informada'}</small><br>
-                    <small>Frequência: ${item.frequencia || 'Não informada'}</small>
+                    <small>Frequência: ${item.frequencia || 'Não informada'}</small><br>
+                    <small>Início: ${formatDate(item.data_inicio)}</small><br>
+                    <small>Fim: ${formatDate(item.data_fim)}</small>
                 `;
             } else if (apiEndpoint === 'vacinas') {
                 itemDiv.innerHTML = `
                     <strong>${item.nome || 'Sem nome'}</strong><br>
                     <small>Fabricante: ${item.fabricante || 'Não informado'}</small><br>
-                    <small>Próxima dose: ${item.prox_aplicacao || 'Não informada'}</small>
+                    <small>Próxima dose: ${formatDate(item.prox_aplicacao) || 'Não informada'}</small>
                 `;
             } else if (apiEndpoint === 'procedimentos') {
                 itemDiv.innerHTML = `
                     <strong>${item.tipo || 'Sem tipo'}</strong><br>
-                    <small>${item.descricao || 'Sem descrição'}</small>
+                    <small>${item.descricao || 'Sem descrição'}</small><br>
+                    <small>Data: ${formatDate(item.data_procedimento) || 'Não informada'}</small>
                 `;
             }
 
             const editButton = document.createElement('button');
-            editButton.id = 'btn-editar';
-            editButton.className = 'btn btn-warning btn-sm mt-2';
+            editButton.className = 'btn btn-warning btn-sm mt-2 me-2';
             editButton.textContent = 'Editar';
             editButton.onclick = () => openForm(item, apiEndpoint);
             itemDiv.appendChild(editButton);
+
+            // Botão de remover
+            const deleteButton = document.createElement('button');
+            deleteButton.className = 'btn btn-danger btn-sm mt-2';
+            deleteButton.textContent = 'Remover';
+            deleteButton.onclick = () => deleteItem(item.id, apiEndpoint);
+            itemDiv.appendChild(deleteButton);
 
             section.appendChild(itemDiv);
         });
     }
 
+    function deleteItem(itemId, apiEndpoint) {
+        if (!confirm('Tem certeza que deseja remover este item?')) return;
+        
+        fetch(`http://localhost:1337/${apiEndpoint}/${itemId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Erro ao remover item');
+            alert('Item removido com sucesso!');
+            location.reload();
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            alert('Erro ao remover item: ' + error.message);
+        });
+    }
+
     function openForm(item, apiEndpoint) {
         let formHtml = '';
+        const modalTitle = item ? 'Editar' : 'Adicionar';
+        
         if (apiEndpoint === 'vacinas') {
             formHtml = `
                 <div class="modal fade" id="modalForm" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title">${item ? 'Editar' : 'Adicionar'} Vacina</h5>
+                                <h5 class="modal-title">${modalTitle} Vacina</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                             </div>
                             <div class="modal-body">
@@ -160,11 +220,11 @@ document.addEventListener("DOMContentLoaded", function () {
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Validade:</label>
-                                    <input type="date" id="form-validade" class="form-control" value="${item ? item.validade : ''}" required>
+                                    <input type="date" id="form-validade" class="form-control" value="${item ? item.validade.split('T')[0] : ''}" required>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Data de Aplicação:</label>
-                                    <input type="date" id="form-data_aplicacao" class="form-control" value="${item ? item.data_aplicacao : ''}" required>
+                                    <input type="date" id="form-data_aplicacao" class="form-control" value="${item ? item.data_aplicacao.split('T')[0] : ''}" required>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Veterinário:</label>
@@ -172,12 +232,12 @@ document.addEventListener("DOMContentLoaded", function () {
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Próxima Aplicação:</label>
-                                    <input type="date" id="form-prox_aplicacao" class="form-control" value="${item ? item.prox_aplicacao : ''}" required>
+                                    <input type="date" id="form-prox_aplicacao" class="form-control" value="${item ? item.prox_aplicacao.split('T')[0] : ''}" required>
                                 </div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                <button type="button" class="btn btn-primary" id="saveButton">${item ? 'Salvar' : 'Adicionar'}</button>
+                                <button type="button" class="btn btn-primary" id="saveButton">${modalTitle}</button>
                             </div>
                         </div>
                     </div>
@@ -189,7 +249,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title">${item ? 'Editar' : 'Adicionar'} Medicamento</h5>
+                                <h5 class="modal-title">${modalTitle} Medicamento</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                             </div>
                             <div class="modal-body">
@@ -207,16 +267,16 @@ document.addEventListener("DOMContentLoaded", function () {
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Data de Início:</label>
-                                    <input type="date" id="form-data_inicio" class="form-control" value="${item ? item.data_inicio : ''}" required>
+                                    <input type="date" id="form-data_inicio" class="form-control" value="${item ? item.data_inicio.split('T')[0] : ''}" required>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Data de Fim:</label>
-                                    <input type="date" id="form-data_fim" class="form-control" value="${item ? item.data_fim : ''}">
+                                    <input type="date" id="form-data_fim" class="form-control" value="${item && item.data_fim ? item.data_fim.split('T')[0] : ''}">
                                 </div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                <button type="button" class="btn btn-primary" id="saveButton">${item ? 'Salvar' : 'Adicionar'}</button>
+                                <button type="button" class="btn btn-primary" id="saveButton">${modalTitle}</button>
                             </div>
                         </div>
                     </div>
@@ -228,7 +288,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title">${item ? 'Editar' : 'Adicionar'} Procedimento</h5>
+                                <h5 class="modal-title">${modalTitle} Procedimento</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                             </div>
                             <div class="modal-body">
@@ -238,11 +298,11 @@ document.addEventListener("DOMContentLoaded", function () {
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Descrição:</label>
-                                    <textarea id="form-descricao" class="form-control" required>${item ? item.descricao : ''}</textarea>
+                                    <textarea id="form-descricao" class="form-control" rows="3" required>${item ? item.descricao : ''}</textarea>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Data do Procedimento:</label>
-                                    <input type="date" id="form-data_procedimento" class="form-control" value="${item ? item.data_procedimento : ''}" required>
+                                    <input type="date" id="form-data_procedimento" class="form-control" value="${item ? item.data_procedimento.split('T')[0] : ''}" required>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Veterinário:</label>
@@ -251,7 +311,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                <button type="button" class="btn btn-primary" id="saveButton">${item ? 'Salvar' : 'Adicionar'}</button>
+                                <button type="button" class="btn btn-primary" id="saveButton">${modalTitle}</button>
                             </div>
                         </div>
                     </div>
@@ -262,6 +322,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const modalContainer = document.createElement('div');
         modalContainer.innerHTML = formHtml;
         document.body.appendChild(modalContainer);
+        
         const modal = new bootstrap.Modal(document.getElementById('modalForm'));
         modal.show();
 
@@ -271,8 +332,6 @@ document.addEventListener("DOMContentLoaded", function () {
             
             const method = item ? 'PATCH' : 'POST';
             const url = item ? `http://localhost:1337/${apiEndpoint}/${item.id}` : `http://localhost:1337/${apiEndpoint}`;
-
-            console.log('Enviando dados para:', url, formData);
 
             fetch(url, {
                 method,
@@ -284,18 +343,20 @@ document.addEventListener("DOMContentLoaded", function () {
             })
             .then(response => {
                 if (!response.ok) {
-                    return response.json().then(err => { throw new Error(err.message || 'Erro na requisição') });
+                    return response.json().then(err => { 
+                        throw new Error(err.message || 'Erro na requisição');
+                    });
                 }
                 return response.json();
             })
             .then(() => {
-                alert(item ? 'Atualizado com sucesso!' : 'Adicionado com sucesso!');
+                alert(`${modalTitle} com sucesso!`);
                 modal.hide();
                 location.reload();
             })
             .catch(error => {
                 console.error('Erro:', error);
-                alert('Erro ao salvar: ' + error.message);
+                alert(`Erro ao ${modalTitle.toLowerCase()}: ${error.message}`);
             })
             .finally(() => {
                 document.body.removeChild(modalContainer);
