@@ -1,16 +1,10 @@
 document.addEventListener("DOMContentLoaded", function () {
+
     // botão voltar
-    document.getElementById('btn-voltar').addEventListener('click', function() {
+    document.getElementById('btn-voltar').addEventListener('click', function () {
         window.close();
     });
-    // botão editar pet
-    const btnEditarPet = document.querySelector('#btn-editar-pet');
-    const editPetForm = new bootstrap.Modal(document.querySelector('#editPetForm'));
-    btnEditarPet.addEventListener('click', ()=>{
-        editPetForm.show();
-    });
 
-    
     // Função para formatar datas
     function formatDate(dateString) {
         if (!dateString) return "Não informada";
@@ -37,6 +31,54 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
+    // botões do formulario de edição
+    const btnEditarPet = document.querySelector('#btn-editar-pet');
+    const editPetForm = new bootstrap.Modal(document.querySelector('#editPetForm'));
+    const btnSaveForm = document.querySelector('#btn-save-pet');
+
+    //abrir form
+    btnEditarPet.addEventListener('click', () => {
+        console.log(petId);
+        editPetForm.show();
+    });
+
+    //salvar edição
+    btnSaveForm.addEventListener('click', async () => {
+        const petId = document.getElementById("edit-pet-id").value;
+        
+        
+        if (!petId) {
+            alert('Erro: Pet não encontrado!')
+            return
+        }
+        
+        const nome = document.getElementById("edit-name").value;
+        const especie = document.getElementById("edit-species").value;
+        const raca = document.getElementById("edit-breed").value;
+        const data_nasc = document.getElementById("edit-birthdate").value;
+        const peso = document.getElementById("edit-weight").value;
+        const cond_saude = document.getElementById("edit-health-status").value;
+
+        const petData = { nome, especie, raca, data_nasc, peso, cond_saude }
+
+        try {
+            const response = await fetch(`http://localhost:3000/pets/atualizar/${petId}`, {
+                method: "PATCH",
+                headers: {
+                    "Content-type": "application/json"
+                },
+                body: JSON.stringify(petData)
+            });
+            if (!response.ok) throw new Error('Erro ao atualizar pet');
+            alert('Pet atualizado com sucesso!');
+            editPetForm.hide();
+            location.reload();
+        } catch (e) {
+            console.error(e);
+            alert('Erro ao salvar alterações!')
+        }
+    });
+
     const loadingIndicator = document.createElement('div');
     loadingIndicator.className = 'text-center my-4';
     loadingIndicator.innerHTML = '<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Carregando...</span></div>';
@@ -48,52 +90,52 @@ document.addEventListener("DOMContentLoaded", function () {
             'Content-Type': 'application/json'
         }
     })
-    .then(response => {
-        if (!response.ok) throw new Error('Erro ao buscar pets');
-        return response.json();
-    })
-    .then(pets => {
-        const pet = pets.find(p => p.id == petId);
-        if (!pet) throw new Error('Pet não encontrado');
+        .then(response => {
+            if (!response.ok) throw new Error('Erro ao buscar pets');
+            return response.json();
+        })
+        .then(pets => {
+            const pet = pets.find(p => p.id == petId);
+            if (!pet) throw new Error('Pet não encontrado');
 
-        document.getElementById('pet-name').textContent = pet.nome || 'Não informado';
-        const petIcon = document.getElementById('pet-icon');
-        petIcon.innerHTML = pet.especie.toLowerCase() === 'felino' 
-            ? '<i class="fas fa-cat fa-2x"></i>' 
-            : pet.especie.toLowerCase() === 'canino' 
-            ? '<i class="fas fa-dog fa-2x"></i>' 
-            : '<i class="fas fa-paw fa-2x"></i>';
+            document.getElementById('pet-name').textContent = pet.nome || 'Não informado';
+            const petIcon = document.getElementById('pet-icon');
+            petIcon.innerHTML = pet.especie.toLowerCase() === 'felino'
+                ? '<i class="fas fa-cat fa-2x"></i>'
+                : pet.especie.toLowerCase() === 'canino'
+                    ? '<i class="fas fa-dog fa-2x"></i>'
+                    : '<i class="fas fa-paw fa-2x"></i>';
 
-        document.getElementById('pet-species').textContent = pet.especie || 'Não informado';
-        document.getElementById('pet-breed').textContent = pet.raca || 'Não informado';
-        document.getElementById('pet-age').textContent = pet.idade || 'Não informado'; 
-        document.getElementById('pet-weight').textContent = pet.peso || 'Não informado'; 
-        document.getElementById('pet-health-status').textContent = pet.cond_saude || 'Não informada';
-        
-        return Promise.all([
-            fetch(`http://localhost:1337/medicamentos/pet/${petId}`, {
-                headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
-            }).then(res => res.ok ? res.json() : Promise.reject('Erro ao buscar medicamentos')).catch(() => []),
-            fetch(`http://localhost:1337/vacinas/pet/${petId}`, {
-                headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
-            }).then(res => res.ok ? res.json() : Promise.reject('Erro ao buscar vacinas')).catch(() => []),
-            fetch(`http://localhost:1337/procedimentos/pet/${petId}`, {
-                headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
-            }).then(res => res.ok ? res.json() : Promise.reject('Erro ao buscar procedimentos')).catch(() => [])
-        ]);
-    })
-    .then(([medicamentos, vacinas, procedimentos]) => {
-        fillSection('medications-list', medicamentos, 'medication', 'Nenhuma medicação registrada.', 'medicamentos');
-        fillSection('vaccines-list', vacinas, 'vaccine', 'Nenhuma vacina registrada.', 'vacinas');
-        fillSection('procedures-list', procedimentos, 'procedure', 'Nenhum procedimento registrado.', 'procedimentos');
-    })
-    .catch(error => {
-        console.error('Erro:', error);
-        showError(`Erro ao carregar detalhes do pet: ${error.message}`);
-    })
-    .finally(() => {
-        loadingIndicator.remove();
-    });
+            document.getElementById('pet-species').textContent = pet.especie || 'Não informado';
+            document.getElementById('pet-breed').textContent = pet.raca || 'Não informado';
+            document.getElementById('pet-age').textContent = pet.idade || 'Não informado';
+            document.getElementById('pet-weight').textContent = pet.peso || 'Não informado';
+            document.getElementById('pet-health-status').textContent = pet.cond_saude || 'Não informada';
+
+            return Promise.all([
+                fetch(`http://localhost:1337/medicamentos/pet/${petId}`, {
+                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
+                }).then(res => res.ok ? res.json() : Promise.reject('Erro ao buscar medicamentos')).catch(() => []),
+                fetch(`http://localhost:1337/vacinas/pet/${petId}`, {
+                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
+                }).then(res => res.ok ? res.json() : Promise.reject('Erro ao buscar vacinas')).catch(() => []),
+                fetch(`http://localhost:1337/procedimentos/pet/${petId}`, {
+                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
+                }).then(res => res.ok ? res.json() : Promise.reject('Erro ao buscar procedimentos')).catch(() => [])
+            ]);
+        })
+        .then(([medicamentos, vacinas, procedimentos]) => {
+            fillSection('medications-list', medicamentos, 'medication', 'Nenhuma medicação registrada.', 'medicamentos');
+            fillSection('vaccines-list', vacinas, 'vaccine', 'Nenhuma vacina registrada.', 'vacinas');
+            fillSection('procedures-list', procedimentos, 'procedure', 'Nenhum procedimento registrado.', 'procedimentos');
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            showError(`Erro ao carregar detalhes do pet: ${error.message}`);
+        })
+        .finally(() => {
+            loadingIndicator.remove();
+        });
 
     function fillSection(sectionId, items, itemType, emptyMessage, apiEndpoint) {
         const section = document.getElementById(sectionId);
@@ -115,7 +157,7 @@ document.addEventListener("DOMContentLoaded", function () {
         items.forEach(item => {
             const itemDiv = document.createElement('div');
             itemDiv.className = 'card p-3 mb-2';
-            
+
             if (apiEndpoint === 'medicamentos') {
                 itemDiv.innerHTML = `
                     <strong>${item.nome_medicamento || 'Sem nome'}</strong><br>
@@ -146,21 +188,21 @@ document.addEventListener("DOMContentLoaded", function () {
             // Container para os botões
             const buttonContainer = document.createElement('div');
             buttonContainer.className = 'd-flex gap-2 mt-3';
-            
+
             // Botão Editar
             const editButton = document.createElement('button');
             editButton.id = 'btn-editar';
             editButton.className = 'btn btn-warning btn-sm';
             editButton.textContent = 'Editar';
             editButton.onclick = () => openForm(item, apiEndpoint);
-            
+
             // Botão Remover
             const deleteButton = document.createElement('button');
             deleteButton.id = 'btn-remover';
             deleteButton.className = 'btn btn-danger btn-sm';
             deleteButton.textContent = 'Remover';
             deleteButton.onclick = () => deleteItem(item.id, apiEndpoint);
-            
+
             buttonContainer.appendChild(editButton);
             buttonContainer.appendChild(deleteButton);
             itemDiv.appendChild(buttonContainer);
@@ -170,7 +212,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function deleteItem(itemId, apiEndpoint) {
         if (!confirm('Tem certeza que deseja remover este item?')) return;
-        
+
         fetch(`http://localhost:1337/${apiEndpoint}/${itemId}`, {
             method: 'DELETE',
             headers: {
@@ -178,21 +220,21 @@ document.addEventListener("DOMContentLoaded", function () {
                 'Content-Type': 'application/json'
             }
         })
-        .then(response => {
-            if (!response.ok) throw new Error('Erro ao remover item');
-            alert('Item removido com sucesso!');
-            location.reload();
-        })
-        .catch(error => {
-            console.error('Erro:', error);
-            alert('Erro ao remover item: ' + error.message);
-        });
+            .then(response => {
+                if (!response.ok) throw new Error('Erro ao remover item');
+                alert('Item removido com sucesso!');
+                location.reload();
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                alert('Erro ao remover item: ' + error.message);
+            });
     }
 
     function openForm(item, apiEndpoint) {
         let formHtml = '';
         const modalTitle = item ? 'Editar' : 'Adicionar';
-        
+
         if (apiEndpoint === 'vacinas') {
             formHtml = `
                 <div class="modal fade" id="modalForm" tabindex="-1" aria-hidden="true">
@@ -319,14 +361,14 @@ document.addEventListener("DOMContentLoaded", function () {
         const modalContainer = document.createElement('div');
         modalContainer.innerHTML = formHtml;
         document.body.appendChild(modalContainer);
-        
+
         const modal = new bootstrap.Modal(document.getElementById('modalForm'));
         modal.show();
 
         document.getElementById('saveButton').addEventListener('click', () => {
             const formData = getFormData(apiEndpoint);
             formData.pet_id = petId;
-            
+
             const method = item ? 'PATCH' : 'POST';
             const url = item ? `http://localhost:1337/${apiEndpoint}/${item.id}` : `http://localhost:1337/${apiEndpoint}`;
 
@@ -338,22 +380,22 @@ document.addEventListener("DOMContentLoaded", function () {
                 },
                 body: JSON.stringify(formData)
             })
-            .then(response => {
-                if (!response.ok) throw new Error(response.statusText);
-                return response.json();
-            })
-            .then(() => {
-                alert(`${modalTitle} com sucesso!`);
-                modal.hide();
-                location.reload();
-            })
-            .catch(error => {
-                console.error('Erro:', error);
-                alert(`Erro ao ${modalTitle.toLowerCase()}: ${error.message}`);
-            })
-            .finally(() => {
-                document.body.removeChild(modalContainer);
-            });
+                .then(response => {
+                    if (!response.ok) throw new Error(response.statusText);
+                    return response.json();
+                })
+                .then(() => {
+                    alert(`${modalTitle} com sucesso!`);
+                    modal.hide();
+                    location.reload();
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    alert(`Erro ao ${modalTitle.toLowerCase()}: ${error.message}`);
+                })
+                .finally(() => {
+                    document.body.removeChild(modalContainer);
+                });
         });
 
         document.getElementById('modalForm').addEventListener('hidden.bs.modal', () => {
