@@ -59,6 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById('pet-breed').textContent = pet.raca || 'Não informado';
         document.getElementById('pet-age').textContent = pet.idade || 'Não informado'; 
         document.getElementById('pet-weight').textContent = pet.peso || 'Não informado'; 
+        document.getElementById('pet-health-status').textContent = pet.cond_saude || 'Não informada';
         
         return Promise.all([
             fetch(`http://localhost:1337/medicamentos/pet/${petId}`, {
