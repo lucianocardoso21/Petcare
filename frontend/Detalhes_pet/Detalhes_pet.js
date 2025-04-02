@@ -1,7 +1,16 @@
 document.addEventListener("DOMContentLoaded", function () {
+    // botão voltar
     document.getElementById('btn-voltar').addEventListener('click', function() {
         window.close();
     });
+    // botão editar pet
+    const btnEditarPet = document.querySelector('#btn-editar-pet');
+    const editPetForm = new bootstrap.Modal(document.querySelector('#editPetForm'));
+    btnEditarPet.addEventListener('click', ()=>{
+        editPetForm.show();
+    });
+
+    
     // Função para formatar datas
     function formatDate(dateString) {
         if (!dateString) return "Não informada";
