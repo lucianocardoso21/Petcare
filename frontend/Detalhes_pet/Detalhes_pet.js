@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-
-    // botão voltar
+    // Botão voltar
     document.getElementById('btn-voltar').addEventListener('click', function () {
         window.close();
     });
@@ -31,54 +30,113 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
-    // botões do formulario de edição
+    // Elementos do formulário de edição
     const btnEditarPet = document.querySelector('#btn-editar-pet');
     const editPetForm = new bootstrap.Modal(document.querySelector('#editPetForm'));
     const btnSaveForm = document.querySelector('#btn-save-pet');
 
-    //abrir form
-    btnEditarPet.addEventListener('click', () => {
-        console.log(petId);
-        editPetForm.show();
+    // Função para carregar dados do pet para edição
+    async function loadPetDataForEdit(petId) {
+        try {
+            const response = await fetch(`http://localhost:1337/pets/${petId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+    
+            if (!response.ok) throw new Error('Erro ao carregar pet');
+    
+            const petDataArray = await response.json();
+            
+            // A API retorna um array, pegamos o primeiro item
+            const petData = petDataArray[0]; 
+            
+            console.log('Dados do pet:', petData); // Para debug
+    
+            // Preenche o formulário
+            document.getElementById('edit-pet-id').value = petId;
+            document.getElementById('edit-name').value = petData.nome || '';
+            document.getElementById('edit-species').value = petData.especie || 'Canino';
+            document.getElementById('edit-breed').value = petData.raca || '';
+            
+            // Formata a data corretamente (remove a parte do tempo)
+            const birthDate = petData.data_nasc ? 
+                  petData.data_nasc.split('T')[0] : '';
+            document.getElementById('edit-birthdate').value = birthDate;
+            
+            document.getElementById('edit-weight').value = petData.peso || '';
+            document.getElementById('edit-health-status').value = petData.cond_saude || '';
+            
+            // Seu JSON não tem "observacoes", então deixamos vazio
+            document.getElementById('edit-health-notes').value = ''; 
+    
+        } catch (error) {
+            console.error('Erro:', error);
+            alert('Erro ao carregar dados do pet: ' + error.message);
+        }
+    }
+
+    // Abrir formulário de edição
+    btnEditarPet.addEventListener('click', async () => {
+        try {
+            await loadPetDataForEdit(petId);
+            editPetForm.show();
+        } catch (error) {
+            console.error('Erro ao abrir edição:', error);
+        }
     });
 
-    //salvar edição
+    // Salvar edição
     btnSaveForm.addEventListener('click', async () => {
         const petId = document.getElementById("edit-pet-id").value;
         
-        
         if (!petId) {
-            alert('Erro: Pet não encontrado!')
-            return
+            alert('Erro: Pet não encontrado!');
+            return;
         }
         
-        const nome = document.getElementById("edit-name").value;
-        const especie = document.getElementById("edit-species").value;
-        const raca = document.getElementById("edit-breed").value;
-        const data_nasc = document.getElementById("edit-birthdate").value;
-        const peso = document.getElementById("edit-weight").value;
-        const cond_saude = document.getElementById("edit-health-status").value;
+        const petData = {
+            nome: document.getElementById("edit-name").value,
+            especie: document.getElementById("edit-species").value,
+            raca: document.getElementById("edit-breed").value,
+            data_nasc: document.getElementById("edit-birthdate").value,
+            peso: document.getElementById("edit-weight").value,
+            cond_saude: document.getElementById("edit-health-status").value,
+            observacoes: document.getElementById("edit-health-notes").value
+        };
 
-        const petData = { nome, especie, raca, data_nasc, peso, cond_saude }
+        // Validação básica
+        if (!petData.nome || !petData.especie) {
+            alert('Nome e espécie são obrigatórios!');
+            return;
+        }
 
         try {
             const response = await fetch(`http://localhost:3000/pets/atualizar/${petId}`, {
                 method: "PATCH",
                 headers: {
-                    "Content-type": "application/json"
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
                 },
                 body: JSON.stringify(petData)
             });
-            if (!response.ok) throw new Error('Erro ao atualizar pet');
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Erro ao atualizar pet');
+            }
+            
             alert('Pet atualizado com sucesso!');
             editPetForm.hide();
             location.reload();
         } catch (e) {
             console.error(e);
-            alert('Erro ao salvar alterações!')
+            alert('Erro ao salvar alterações: ' + e.message);
         }
     });
 
+    // Carregar detalhes do pet
     const loadingIndicator = document.createElement('div');
     loadingIndicator.className = 'text-center my-4';
     loadingIndicator.innerHTML = '<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Carregando...</span></div>';
