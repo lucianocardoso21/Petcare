@@ -32,19 +32,40 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function formatDateTime(dateTimeString) {
-        if (!dateTimeString) return "Data não disponível";
+        if (!dateTimeString) return null;
+    
         try {
-            const date = new Date(dateTimeString);
+            // Converter para Date (tratando múltiplos formatos)
+            let date;
+            
+            // Formato ISO (2024-05-20T14:30:00Z)
+            if (dateTimeString.includes('T')) {
+                date = new Date(dateTimeString);
+            } 
+            // Formato SQL (2024-05-20 14:30:00)
+            else if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(dateTimeString)) {
+                date = new Date(dateTimeString.replace(' ', 'T') + 'Z');
+            }
+            // Timestamp UNIX
+            else if (/^\d+$/.test(dateTimeString)) {
+                date = new Date(parseInt(dateTimeString));
+            }
+            
+            if (!date || isNaN(date.getTime())) {
+                throw new Error('Formato de data não reconhecido');
+            }
+    
             return date.toLocaleString('pt-BR', {
                 day: '2-digit',
                 month: '2-digit',
                 year: 'numeric',
                 hour: '2-digit',
-                minute: '2-digit'
+                minute: '2-digit',
+                timeZone: 'America/Sao_Paulo'
             });
         } catch (e) {
-            console.error("Erro ao formatar data/hora:", e);
-            return dateTimeString;
+            console.error("Erro ao formatar data:", dateTimeString, e);
+            throw e; // Re-lança o erro para ser tratado externamente
         }
     }
 
@@ -67,11 +88,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     'Content-Type': 'application/json'
                 }
             });
-            
+
             if (!response.ok) throw new Error('Erro ao carregar dados do pet');
-            
+
             const [petData] = await response.json();
-            
+
             // Preencher formulário de edição
             document.getElementById('edit-pet-id').value = petId;
             document.getElementById('edit-name').value = petData.nome || '';
@@ -80,7 +101,7 @@ document.addEventListener("DOMContentLoaded", function () {
             document.getElementById('edit-birthdate').value = petData.data_nasc?.split('T')[0] || '';
             document.getElementById('edit-weight').value = petData.peso || '';
             document.getElementById('edit-health-status').value = petData.cond_saude || '';
-            
+
         } catch (error) {
             console.error('Erro ao carregar dados do pet:', error);
             alert('Erro ao carregar dados do pet para edição');
@@ -113,12 +134,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 },
                 body: JSON.stringify(petData)
             });
-            
+
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.message || 'Erro ao atualizar pet');
             }
-            
+
             return true;
         } catch (e) {
             console.error(e);
@@ -136,7 +157,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         section.innerHTML = '';
-        
+
         // Botão Adicionar
         const addButton = document.createElement('button');
         addButton.className = 'btn btn-success mb-3';
@@ -158,21 +179,21 @@ document.addEventListener("DOMContentLoaded", function () {
             const itemDiv = document.createElement('div');
             itemDiv.className = 'card mb-3';
             itemDiv.innerHTML = generateItemHTML(item, apiEndpoint);
-            
+
             // Botões de ação
             const buttonContainer = document.createElement('div');
             buttonContainer.className = 'card-footer bg-white d-flex justify-content-end gap-2';
-            
+
             const editButton = document.createElement('button');
             editButton.className = 'btn btn-sm btn-warning';
             editButton.innerHTML = '<i class="fas fa-edit me-1"></i>Editar';
             editButton.onclick = () => openForm(item, apiEndpoint);
-            
+
             const deleteButton = document.createElement('button');
             deleteButton.className = 'btn btn-sm btn-danger';
             deleteButton.innerHTML = '<i class="fas fa-trash me-1"></i>Remover';
             deleteButton.onclick = () => deleteItem(item.id, apiEndpoint);
-            
+
             buttonContainer.appendChild(editButton);
             buttonContainer.appendChild(deleteButton);
             itemDiv.appendChild(buttonContainer);
@@ -182,7 +203,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function generateItemHTML(item, apiEndpoint) {
         let html = '<div class="card-body">';
-        
+
         if (apiEndpoint === 'medicamentos') {
             html += `
                 <h5 class="card-title">${item.nome_medicamento || 'Sem nome'}</h5>
@@ -227,7 +248,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 </div>
             `;
         }
-        
+
         html += '</div>';
         return html;
     }
@@ -251,9 +272,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     'Content-Type': 'application/json'
                 }
             });
-            
+
             if (!response.ok) throw new Error('Erro ao remover item');
-            
+
             alert('Item removido com sucesso!');
             location.reload();
         } catch (error) {
@@ -287,6 +308,11 @@ document.addEventListener("DOMContentLoaded", function () {
             loadingIndicator.innerHTML = '<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Carregando...</span></div>';
             document.querySelector('.pet-details-container').prepend(loadingIndicator);
 
+            // Verificar se petId existe
+            if (!petId) {
+                throw new Error('ID do pet não encontrado na URL');
+            }
+
             // Carregar dados do pet
             const petsResponse = await fetch(`http://localhost:1337/pets/prop/${localStorage.getItem('cpf')}`, {
                 headers: {
@@ -294,58 +320,112 @@ document.addEventListener("DOMContentLoaded", function () {
                     'Content-Type': 'application/json'
                 }
             });
-            
-            if (!petsResponse.ok) throw new Error('Erro ao buscar pets');
-            
+
+            if (!petsResponse.ok) {
+                throw new Error(`Erro ${petsResponse.status}: ${petsResponse.statusText}`);
+            }
+
             const pets = await petsResponse.json();
             const pet = pets.find(p => p.id == petId);
-            if (!pet) throw new Error('Pet não encontrado');
 
-            // Preencher informações básicas
-            document.getElementById('pet-name').textContent = pet.nome || 'Não informado';
-            
+            if (!pet) {
+                throw new Error(`Pet com ID ${petId} não encontrado`);
+            }
+
+            console.log('Dados do pet recebidos:', pet); // Debug
+
+            // Preencher informações básicas com verificação
+            const setTextContent = (id, value, defaultValue = 'Não informado') => {
+                const element = document.getElementById(id);
+                if (element) element.textContent = value || defaultValue;
+            };
+
+            setTextContent('pet-name', pet.nome);
+            setTextContent('pet-species', pet.especie);
+            setTextContent('pet-breed', pet.raca);
+            setTextContent('pet-age', pet.idade);
+            setTextContent('pet-weight', pet.peso);
+            setTextContent('pet-health-status', pet.cond_saude, 'Não informada');
+
+            // Data de atualização formatada
+            // Na função loadPetData(), substitua esta parte:
+            const updateDateElement = document.getElementById('pet-update-date');
+            if (updateDateElement) {
+                console.log('Valor bruto de data_alteracao:', pet.data_alteracao); // Debug
+
+                // Verifique todos os possíveis nomes de campo
+                const rawDate = pet.data_alteracao || pet.updated_at || pet.data_atualizacao;
+
+                if (rawDate) {
+                    try {
+                        const formattedDate = formatDateTime(rawDate);
+                        updateDateElement.textContent = formattedDate;
+                        updateDateElement.style.fontStyle = 'normal';
+
+                        // Adicione um tooltip com a data completa
+                        updateDateElement.title = `Atualizado em: ${formattedDate}`;
+                    } catch (e) {
+                        console.error('Erro ao formatar data:', e);
+                        updateDateElement.textContent = "Data inválida";
+                        updateDateElement.style.fontStyle = 'italic';
+                    }
+                } else {
+                    updateDateElement.textContent = "Não registrada";
+                    updateDateElement.style.fontStyle = 'italic';
+                }
+            }
+
             // Ícone conforme espécie
             const petIcon = document.getElementById('pet-icon');
-            petIcon.innerHTML = pet.especie?.toLowerCase() === 'felino'
-                ? '<i class="fas fa-cat fa-2x"></i>'
-                : pet.especie?.toLowerCase() === 'canino'
-                    ? '<i class="fas fa-dog fa-2x"></i>'
-                    : '<i class="fas fa-paw fa-2x"></i>';
+            if (petIcon) {
+                petIcon.innerHTML = pet.especie?.toLowerCase() === 'felino'
+                    ? '<i class="fas fa-cat fa-2x"></i>'
+                    : pet.especie?.toLowerCase() === 'canino'
+                        ? '<i class="fas fa-dog fa-2x"></i>'
+                        : '<i class="fas fa-paw fa-2x"></i>';
+            }
 
-            document.getElementById('pet-species').textContent = pet.especie || 'Não informado';
-            document.getElementById('pet-breed').textContent = pet.raca || 'Não informado';
-            document.getElementById('pet-age').textContent = pet.idade || 'Não informado';
-            document.getElementById('pet-weight').textContent = pet.peso || 'Não informado';
-            document.getElementById('pet-health-status').textContent = pet.cond_saude || 'Não informada';
-            document.getElementById('pet-update-date').textContent = formatDateTime(pet.data_alteracao);
+            // Carregar itens relacionados com tratamento de erro
+            const loadPetItems = async (endpoint) => {
+                try {
+                    const response = await fetch(`http://localhost:1337/${endpoint}/pet/${petId}`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    return response.ok ? await response.json() : [];
+                } catch (error) {
+                    console.error(`Erro ao carregar ${endpoint}:`, error);
+                    return [];
+                }
+            };
 
-            // Carregar itens relacionados
             const [medicamentos, vacinas, procedimentos] = await Promise.all([
-                fetch(`http://localhost:1337/medicamentos/pet/${petId}`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                }).then(res => res.ok ? res.json() : []).catch(() => []),
-                
-                fetch(`http://localhost:1337/vacinas/pet/${petId}`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                }).then(res => res.ok ? res.json() : []).catch(() => []),
-                
-                fetch(`http://localhost:1337/procedimentos/pet/${petId}`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                }).then(res => res.ok ? res.json() : []).catch(() => [])
+                loadPetItems('medicamentos'),
+                loadPetItems('vacinas'),
+                loadPetItems('procedimentos')
             ]);
 
-            // Preencher as abas
-            fillSection('medications-list', medicamentos, 'Nenhuma medicação registrada.', 'medicamentos');
-            fillSection('vaccines-list', vacinas, 'Nenhuma vacina registrada.', 'vacinas');
-            fillSection('procedures-list', procedimentos, 'Nenhum procedimento registrado.', 'procedimentos');
+            // Preencher as abas com verificação
+            const fillSectionSafe = (sectionId, items, emptyMessage, apiEndpoint) => {
+                const section = document.getElementById(sectionId);
+                if (section) fillSection(sectionId, items, emptyMessage, apiEndpoint);
+            };
+
+            fillSectionSafe('medications-list', medicamentos, 'Nenhuma medicação registrada.', 'medicamentos');
+            fillSectionSafe('vaccines-list', vacinas, 'Nenhuma vacina registrada.', 'vacinas');
+            fillSectionSafe('procedures-list', procedimentos, 'Nenhum procedimento registrado.', 'procedimentos');
 
         } catch (error) {
-            console.error('Erro:', error);
-            showError(`Erro ao carregar detalhes do pet: ${error.message}`);
+            console.error('Erro ao carregar dados do pet:', error);
+            showError(`Falha ao carregar dados: ${error.message}`);
+
+            // Opcional: Redirecionar após 3 segundos se for erro grave
+            if (error.message.includes('não encontrado')) {
+                setTimeout(() => window.location.href = '/pets.html', 3000);
+            }
         } finally {
-            // Remover loading
-            const loading = document.querySelector('.spinner-border');
-            if (loading) loading.remove();
+            // Remover loading de forma segura
+            const loadings = document.querySelectorAll('.spinner-border');
+            loadings.forEach(loading => loading.remove());
         }
     }
 

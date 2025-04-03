@@ -48,3 +48,10 @@
 #btn-editar, #btn-remover {
     width: 100px;
 }
+
+#pet-update-date {
+    font-weight: normal;
+    color: #6c757d;
+    font-size: 0.9em;
+    font-style: italic;
+}
