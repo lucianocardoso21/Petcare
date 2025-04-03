@@ -23,6 +23,17 @@
             font-size: 1.1rem;
             min-height: 120px;
         }
+        /* Estilos para as abas de conteúdo */
+        #medications-list, 
+        #vaccines-list, 
+        #procedures-list {
+            min-height: 200px;
+        }
+        .tab-content {
+            background: #fff;
+            padding: 20px;
+            border-radius: 0 0 8px 8px;
+        }
     </style>
 </head>
 <body>
@@ -94,7 +105,7 @@
                                     <i class="fas fa-heartbeat text-danger me-2"></i>Condição de Saúde
                                 </h5>
                                 <div class="mb-4">
-                                    <h6>Condição Atual</h6>
+                                    <h6>Atualizada em: <span id="pet-update-date" class="fw-normal">--/--/---- --:--</span></h6>
                                     <div class="health-status-container">
                                         <span class="health-status-text" id="pet-health-status">Não informada</span>
                                     </div>
@@ -105,8 +116,38 @@
                 </div>
             </div>
 
-            <!-- Outras abas permanecem iguais -->
-            <!-- ... -->
+            <!-- Aba de Medicações -->
+            <div class="tab-pane fade" id="medications" role="tabpanel">
+                <div id="medications-list">
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Carregando...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Aba de Vacinas -->
+            <div class="tab-pane fade" id="vaccines" role="tabpanel">
+                <div id="vaccines-list">
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Carregando...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Aba de Procedimentos -->
+            <div class="tab-pane fade" id="procedures" role="tabpanel">
+                <div id="procedures-list">
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Carregando...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <button id="btn-voltar" type="button" class="btn btn-outline-success mt-4">
