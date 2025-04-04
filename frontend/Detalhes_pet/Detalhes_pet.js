@@ -129,7 +129,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         try {
-            const response = await fetch(`http://localhost:3000/pets/atualizar/${petId}`, {
+            const response = await fetch(`http://localhost:1337/pets/atualizar/${petId}`, {
                 method: "PATCH",
                 headers: {
                     "Authorization": `Bearer ${token}`,
