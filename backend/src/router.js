@@ -39,6 +39,7 @@ router.get('/procedimentos/pet/:id_pet', tasksController.listarProcedimentosPet)
 // Rotas para Medicamentos
 router.post('/medicamentos', tasksController.cadastrarMedicamento);
 router.get('/medicamentos/:id', tasksController.buscarMedicamentoId);
+router.delete('/medicamentos/:id', tasksController.excluirMedicamentoId);
 router.patch('/medicamentos/:id', tasksController.atualizarMedicamento);
 router.get('/medicamentos/pet/:id_pet', tasksController.listarMedicamentosPet);
 

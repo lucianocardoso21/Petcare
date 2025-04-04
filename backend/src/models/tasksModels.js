@@ -479,7 +479,6 @@ const listarVacinasPet = async (id_pet) => {
 };
 
 /** Atualizar Vacina */
-// tasksModels.js
 
 const atualizarVacina = async (id, camposAtualizados, valoresAtualizados) => {
     try {
@@ -659,6 +658,35 @@ const atualizarMedicamento = async (id, dados) => {
     }
 };
 
+/** Excluir medicamento */
+const excluirMedicamentoId = async (id) => {
+    try {
+        if (!id || isNaN(id)) {
+            throw new Error('ID invalido');
+        }
+        const [medicamento] = await connection.execute(
+            'SELECT id FROM medicamentos WHERE id = ?', [id]
+        );
+        if (medicamento.length === 0) {
+            throw new Error('Medicamento não encontrado.');
+        }
+        const [result] = await connection.execute(
+            'DELETE FROM medicamentos WHERE id = ?', [id]
+        );
+        if (result.affectedRows === 0) {
+            throw new Error('Nenhum medicamento foi removido.');
+        }
+        return {
+            success: true,
+            message: 'Medicamento removido com sucesso!',
+            affectedRows: result.affectedRows,
+            deletedId: id
+        };
+    } catch (error) {
+        console.error('Erro ao remover medicamento', error);
+    }
+};
+
 // Função para autenticar o cliente pelo CPF
 const autenticarClientePorCpf = async (cpf) => {
     const query = 'SELECT * FROM clientes WHERE cpf = ?';
@@ -701,5 +729,6 @@ module.exports = {
     buscarMedicamentoId,
     listarMedicamentosPet,
     atualizarMedicamento,
+    excluirMedicamentoId,
     autenticarClientePorCpf,
 };

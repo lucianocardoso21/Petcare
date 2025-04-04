@@ -32,7 +32,7 @@ const telaDeCadastro = (req, res) => {
     res.sendFile(path.join(__dirname, '..', '..', '..', 'TelaCadastroHtml', 'Cadastro.html')); // Ajuste o caminho para o arquivo Cadastro.html
 };
 
-// CLIENTES
+/** CLIENTES */ 
 const buscarClienteCpf = async (req, res) => {
     try {
         const { cpf } = req.params; // Obtendo CPF via parâmetros de URL
@@ -73,6 +73,7 @@ const listarClientes = async (req, res) => {
         responderComErro(res, error);
     }
 };
+
 const verificarClienteExistente = async (req, res) => {
     try {
         const { cpf } = req.params; // Obtendo CPF
@@ -124,7 +125,6 @@ const atualizarCampoCliente = async (req, res) => {
     }
 };
 
-
 const buscarClienteNome = async (req, res) => {
     try {
         const { nome } = req.params; // Nome para busca
@@ -162,7 +162,7 @@ const alterarStatusCliente = async (req, res) => {
     }
 };
 
-
+/** PETS  */
 const cadastrarPet = async (req, res) => {
     try {
         // Desestruturando os dados do corpo da requisição
@@ -248,6 +248,7 @@ const statusPet = async (req, res) => {
         responderComErro(res, error);
     }
 };
+
 const listarPet = async (req, res) => {
     try {
         const tasks = await tasksModels.listarPet();
@@ -274,7 +275,7 @@ const alterarStatusPet = async (req, res) => {
     }
 };
 
-/** TABELA VACINAS */
+/** VACINAS */
 
 const cadastrarVacina = async (req, res) => {
     try {
@@ -327,7 +328,6 @@ const listarVacinasPet = async (req, res) => {
         responderComErro(res, error);
     }
 };
-// tasksController.js
 
 const atualizarVacina = async (req, res) => {
     try {
@@ -390,6 +390,7 @@ const atualizarVacina = async (req, res) => {
     }
 };
 
+/** PROCEDIMENTOS */
 const cadastrarProcedimento = async (req, res) => {
     try {
         const { id_pet, tipo, descricao, data_procedimento, veterinario } = req.body;
@@ -442,6 +443,7 @@ const listarProcedimentosPet = async (req, res) => {
         responderComErro(res, error);
     }
 };
+
 const atualizarProcedimento = async (req, res) => {
     try {
         const { id } = req.params; // Captura o id da URL
@@ -502,6 +504,8 @@ const atualizarProcedimento = async (req, res) => {
     }
 };
 
+/** MEDICAMENTOS */
+
 const cadastrarMedicamento = async (req, res) => {
     try {
         const { id_pet, nome_medicamento, dosagem, frequencia, data_inicio, data_fim } = req.body;
@@ -525,6 +529,7 @@ const buscarMedicamentoId = async (req, res) => {
         responderComErro(res, error);
     }
 };
+
 const listarMedicamentosPet = async (req, res) => {
     try {
         const { id_pet } = req.params;
@@ -535,6 +540,7 @@ const listarMedicamentosPet = async (req, res) => {
         responderComErro(res, error);
     }
 };
+
 const atualizarMedicamento = async (req, res) => {
     try {
         const { id } = req.params;
@@ -550,6 +556,29 @@ const atualizarMedicamento = async (req, res) => {
         responderComErro(res, error);
     }
 };
+const excluirMedicamentoId = async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        // Validação básica (igual ao seu estilo)
+        if (!id) throw new Error('ID do medicamento é necessário');
+        
+        // Executa a exclusão no model
+        const result = await tasksModels.excluirMedicamentoId(id);
+        
+        // Resposta no mesmo padrão que você usa
+        responderComSucesso(res, {
+            message: 'Medicamento removido com sucesso',
+            affectedRows: result.affectedRows,
+            deletedId: id
+        });
+        
+    } catch (error) {
+        // Tratamento de erro igual ao seu padrão
+        responderComErro(res, error);
+    }
+};
+
 
 const secretKey = 'password';  // Defina sua chave secreta
 
@@ -662,6 +691,7 @@ module.exports = {
     buscarMedicamentoId,
     listarMedicamentosPet,
     atualizarMedicamento,
+    excluirMedicamentoId,
     loginCliente,
     telaDeCadastro,
     dashboard, 
