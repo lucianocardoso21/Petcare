@@ -259,7 +259,8 @@ const listarPetCpfProp = async (cpf_prop) => {
                 pets.data_nasc, 
                 pets.peso, 
                 pets.cond_saude, 
-                pets.status
+                pets.status,
+                pets.data_alteracao
             FROM pets 
             WHERE pets.cpf_prop = ?;
         `;

@@ -33,16 +33,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function formatDateTime(dateTimeString) {
         if (!dateTimeString) return null;
-    
+
         try {
-            // Converter para Date (tratando múltiplos formatos)
             let date;
-            
+
+            // Se já for um objeto Date
+            if (dateTimeString instanceof Date) {
+                date = dateTimeString;
+            }
             // Formato ISO (2024-05-20T14:30:00Z)
-            if (dateTimeString.includes('T')) {
+            else if (dateTimeString.includes('T')) {
                 date = new Date(dateTimeString);
-            } 
-            // Formato SQL (2024-05-20 14:30:00)
+            }
+            // Formato SQL (2025-04-02 12:02:12)
             else if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(dateTimeString)) {
                 date = new Date(dateTimeString.replace(' ', 'T') + 'Z');
             }
@@ -50,11 +53,11 @@ document.addEventListener("DOMContentLoaded", function () {
             else if (/^\d+$/.test(dateTimeString)) {
                 date = new Date(parseInt(dateTimeString));
             }
-            
+
             if (!date || isNaN(date.getTime())) {
                 throw new Error('Formato de data não reconhecido');
             }
-    
+
             return date.toLocaleString('pt-BR', {
                 day: '2-digit',
                 month: '2-digit',
@@ -65,7 +68,7 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         } catch (e) {
             console.error("Erro ao formatar data:", dateTimeString, e);
-            throw e; // Re-lança o erro para ser tratado externamente
+            return dateTimeString; // Retorna o valor original em caso de erro
         }
     }
 
@@ -332,7 +335,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 throw new Error(`Pet com ID ${petId} não encontrado`);
             }
 
-            console.log('Dados do pet recebidos:', pet); // Debug
+            console.log('Dados completos do pet:', pet); // Debug
+            console.log('Campo data_alteracao existe?', 'data_alteracao' in pet);
+            console.log('Valor de data_alteracao:', pet.data_alteracao);
+
 
             // Preencher informações básicas com verificação
             const setTextContent = (id, value, defaultValue = 'Não informado') => {
@@ -347,18 +353,25 @@ document.addEventListener("DOMContentLoaded", function () {
             setTextContent('pet-weight', pet.peso);
             setTextContent('pet-health-status', pet.cond_saude, 'Não informada');
 
-            // Data de atualização formatada
-            // Na função loadPetData(), substitua esta parte:
             const updateDateElement = document.getElementById('pet-update-date');
             if (updateDateElement) {
                 console.log('Valor bruto de data_alteracao:', pet.data_alteracao); // Debug
 
                 // Verifique todos os possíveis nomes de campo
-                const rawDate = pet.data_alteracao || pet.updated_at || pet.data_atualizacao;
+                const rawDate = pet.data_alteracao || pet.updated_at || pet.data_atualizacao || pet.updatedAt;
 
                 if (rawDate) {
                     try {
-                        const formattedDate = formatDateTime(rawDate);
+                        // Adicione um fallback para datas em formato SQL
+                        let dateToFormat = rawDate;
+                        if (typeof rawDate === 'string' && rawDate.includes(' ')) {
+                            dateToFormat = rawDate.replace(' ', 'T');
+                            if (!dateToFormat.includes('Z') && !dateToFormat.includes('+')) {
+                                dateToFormat += 'Z'; // Assume UTC se não tiver timezone
+                            }
+                        }
+
+                        const formattedDate = formatDateTime(dateToFormat);
                         updateDateElement.textContent = formattedDate;
                         updateDateElement.style.fontStyle = 'normal';
 
@@ -366,7 +379,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         updateDateElement.title = `Atualizado em: ${formattedDate}`;
                     } catch (e) {
                         console.error('Erro ao formatar data:', e);
-                        updateDateElement.textContent = "Data inválida";
+                        updateDateElement.textContent = rawDate; // Mostra o valor bruto se falhar
                         updateDateElement.style.fontStyle = 'italic';
                     }
                 } else {
