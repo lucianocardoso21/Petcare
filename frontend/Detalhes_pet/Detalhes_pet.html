@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,21 +15,25 @@
             padding: 1rem;
             border-radius: 0.25rem;
         }
+
         .health-status-text {
             font-size: 1.1rem;
             white-space: pre-wrap;
             line-height: 1.6;
         }
+
         #edit-health-status {
             font-size: 1.1rem;
             min-height: 120px;
         }
+
         /* Estilos para as abas de conteúdo */
-        #medications-list, 
-        #vaccines-list, 
+        #medications-list,
+        #vaccines-list,
         #procedures-list {
             min-height: 200px;
         }
+
         .tab-content {
             background: #fff;
             padding: 20px;
@@ -36,6 +41,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container pet-details-container">
         <!-- Cabeçalho -->
@@ -72,22 +78,26 @@
         <!-- Abas de navegação -->
         <ul class="nav nav-tabs mt-4" id="petTabs" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="health-tab" data-bs-toggle="tab" data-bs-target="#health" type="button" role="tab">
+                <button class="nav-link active" id="health-tab" data-bs-toggle="tab" data-bs-target="#health"
+                    type="button" role="tab">
                     <i class="fas fa-heartbeat me-2"></i>Saúde
                 </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="medications-tab" data-bs-toggle="tab" data-bs-target="#medications" type="button" role="tab">
+                <button class="nav-link" id="medications-tab" data-bs-toggle="tab" data-bs-target="#medications"
+                    type="button" role="tab">
                     <i class="fas fa-pills me-2"></i>Medicações
                 </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="vaccines-tab" data-bs-toggle="tab" data-bs-target="#vaccines" type="button" role="tab">
+                <button class="nav-link" id="vaccines-tab" data-bs-toggle="tab" data-bs-target="#vaccines" type="button"
+                    role="tab">
                     <i class="fas fa-syringe me-2"></i>Vacinas
                 </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="procedures-tab" data-bs-toggle="tab" data-bs-target="#procedures" type="button" role="tab">
+                <button class="nav-link" id="procedures-tab" data-bs-toggle="tab" data-bs-target="#procedures"
+                    type="button" role="tab">
                     <i class="fas fa-procedures me-2"></i>Procedimentos
                 </button>
             </li>
@@ -105,7 +115,8 @@
                                     <i class="fas fa-heartbeat text-danger me-2"></i>Condição de Saúde
                                 </h5>
                                 <div class="mb-4">
-                                    <h6>Atualizada em: <span id="pet-update-date" class="fw-normal">--/--/---- --:--</span></h6>
+                                    <h6>Atualizada em: <span id="pet-update-date" class="fw-normal">--/--/----
+                                            --:--</span></h6>
                                     <div class="health-status-container">
                                         <span class="health-status-text" id="pet-health-status">Não informada</span>
                                     </div>
@@ -161,7 +172,8 @@
             <div class="modal-content">
                 <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title">Editar Informações do Pet</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body">
                     <form id="editPetForm">
@@ -198,7 +210,8 @@
                                 <h5 class="mb-3">Condição de Saúde</h5>
                                 <div class="mb-3">
                                     <label for="edit-health-status" class="form-label">Condição Atual</label>
-                                    <textarea id="edit-health-status" class="form-control" rows="5" style="min-height: 120px;"></textarea>
+                                    <textarea id="edit-health-status" class="form-control" rows="5"
+                                        style="min-height: 120px;"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -211,8 +224,161 @@
             </div>
         </div>
     </div>
+    <!-- Modal para Medicamentos -->
+    <div class="modal fade" id="medicationModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="medicationModalTitle">Adicionar Medicamento</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="medicationForm">
+                        <input type="hidden" id="medication-id">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="medication-name" class="form-label">Nome do Medicamento*</label>
+                                    <input type="text" class="form-control" id="medication-name" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="medication-dosage" class="form-label">Dosagem*</label>
+                                    <input type="text" class="form-control" id="medication-dosage" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="medication-frequency" class="form-label">Frequência*</label>
+                                    <input type="text" class="form-control" id="medication-frequency" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="medication-start" class="form-label">Data de Início*</label>
+                                    <input type="date" class="formcontrol" id="medication-start" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="medication-end" class="form-label">Data de Término</label>
+                                    <input type="date" class="form-control" id="medication-end">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="medication-notes" class="form-label">Observações</label>
+                                    <textarea class="form-control" id="medication-notes" rows="3"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="btn-save-medication">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Vacinas -->
+    <div class="modal fade" id="vaccineModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="vaccineModalTitle">Adicionar Vacina</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="vaccineForm">
+                        <input type="hidden" id="vaccine-id">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="vaccine-name" class="form-label">Nome da Vacina*</label>
+                                    <input type="text" class="form-control" id="vaccine-name" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="vaccine-manufacturer" class="form-label">Fabricante*</label>
+                                    <input type="text" class="form-control" id="vaccine-manufacturer" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="vaccine-lot" class="form-label">Número do Lote*</label>
+                                    <input type="text" class="form-control" id="vaccine-lot" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="vaccine-application" class="form-label">Data de Aplicação*</label>
+                                    <input type="date" class="form-control" id="vaccine-application" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="vaccine-next" class="form-label">Próxima Aplicação</label>
+                                    <input type="date" class="form-control" id="vaccine-next">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="vaccine-vet" class="form-label">Veterinário</label>
+                                    <input type="text" class="form-control" id="vaccine-vet">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="btn-save-vaccine">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Procedimentos -->
+    <div class="modal fade" id="procedureModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="procedureModalTitle">Adicionar Procedimento</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="procedureForm">
+                        <input type="hidden" id="procedure-id">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="procedure-type" class="form-label">Tipo de Procedimento*</label>
+                                    <input type="text" class="form-control" id="procedure-type" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="procedure-date" class="form-label">Data*</label>
+                                    <input type="date" class="form-control" id="procedure-date" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="procedure-vet" class="form-label">Veterinário</label>
+                                    <input type="text" class="form-control" id="procedure-vet">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="procedure-description" class="form-label">Descrição*</label>
+                                    <textarea class="form-control" id="procedure-description" rows="5"
+                                        required></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="procedure-notes" class="form-label">Observações</label>
+                                    <textarea class="form-control" id="procedure-notes" rows="2"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="btn-save-procedure">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="Detalhes_pet.js"></script>
 </body>
+
 </html>

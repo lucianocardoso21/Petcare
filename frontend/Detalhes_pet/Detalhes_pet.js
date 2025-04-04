@@ -167,8 +167,6 @@ document.addEventListener("DOMContentLoaded", function () {
         addButton.innerHTML = '<i class="fas fa-plus me-2"></i>Adicionar';
         addButton.onclick = () => openForm(null, apiEndpoint);
         section.appendChild(addButton);
-
-        // Mensagem se vazio
         if (!items || items.length === 0) {
             const emptyText = document.createElement('div');
             emptyText.className = 'alert alert-info';
@@ -257,10 +255,261 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Abrir formulário para adicionar/editar item
+    // Abrir formulário para adicionar/editar item
     function openForm(item, apiEndpoint) {
-        // Implementação do formulário modal para cada tipo de item
-        // (Mantido genérico para o exemplo)
-        alert(`Abrir formulário para ${apiEndpoint}: ${item ? 'Editar' : 'Novo'}`);
+        let modalId, formId, titleId;
+        let isEditMode = item !== null;
+
+        // Configurações específicas para cada tipo
+        switch (apiEndpoint) {
+            case 'medicamentos':
+                modalId = '#medicationModal';
+                formId = 'medicationForm';
+                titleId = 'medicationModalTitle';
+                break;
+            case 'vacinas':
+                modalId = '#vaccineModal';
+                formId = 'vaccineForm';
+                titleId = 'vaccineModalTitle';
+                break;
+            case 'procedimentos':
+                modalId = '#procedureModal';
+                formId = 'procedureForm';
+                titleId = 'procedureModalTitle';
+                break;
+            default:
+                console.error('Tipo de endpoint não suportado:', apiEndpoint);
+                return;
+        }
+
+        const modal = new bootstrap.Modal(document.querySelector(modalId));
+        const form = document.getElementById(formId);
+        const title = document.getElementById(titleId);
+
+        if (!modal || !form || !title) {
+            console.error('Elementos do modal não encontrados para:', apiEndpoint);
+            return;
+        }
+
+        // Configuração comum para todos os modais
+        title.textContent = isEditMode ? `Editar ${getEndpointName(apiEndpoint)}` : `Adicionar ${getEndpointName(apiEndpoint)}`;
+        form.reset();
+
+        if (isEditMode) {
+            // Preenche o formulário com os dados do item
+            fillFormForEndpoint(apiEndpoint, form, item);
+        } else {
+            // Configura valores padrão para novo item
+            setDefaultValuesForNewItem(apiEndpoint, form);
+        }
+
+        modal.show();
+    }
+
+    // Função auxiliar para obter o nome amigável do endpoint
+    function getEndpointName(apiEndpoint) {
+        const names = {
+            'medicamentos': 'Medicação',
+            'vacinas': 'Vacina',
+            'procedimentos': 'Procedimento'
+        };
+        return names[apiEndpoint] || 'Item';
+    }
+
+    // Função para preencher o formulário com base no tipo de endpoint
+    function fillFormForEndpoint(apiEndpoint, form, item) {
+        switch (apiEndpoint) {
+            case 'medicamentos':
+                form.querySelector('#medication-id').value = item.id;
+                form.querySelector('#medication-name').value = item.nome_medicamento || '';
+                form.querySelector('#medication-dosage').value = item.dosagem || '';
+                form.querySelector('#medication-frequency').value = item.frequencia || '';
+                form.querySelector('#medication-start').value = item.data_inicio?.split('T')[0] || '';
+                form.querySelector('#medication-end').value = item.data_fim?.split('T')[0] || '';
+                form.querySelector('#medication-notes').value = item.observacoes || '';
+                break;
+
+            case 'vacinas':
+                form.querySelector('#vaccine-id').value = item.id;
+                form.querySelector('#vaccine-name').value = item.nome || '';
+                form.querySelector('#vaccine-manufacturer').value = item.fabricante || '';
+                form.querySelector('#vaccine-lot').value = item.lote || '';
+                form.querySelector('#vaccine-application').value = item.data_aplicacao?.split('T')[0] || '';
+                form.querySelector('#vaccine-next').value = item.prox_aplicacao?.split('T')[0] || '';
+                form.querySelector('#vaccine-vet').value = item.veterinario || '';
+                break;
+
+            case 'procedimentos':
+                form.querySelector('#procedure-id').value = item.id;
+                form.querySelector('#procedure-type').value = item.tipo || '';
+                form.querySelector('#procedure-date').value = item.data_procedimento?.split('T')[0] || '';
+                form.querySelector('#procedure-description').value = item.descricao || '';
+                form.querySelector('#procedure-vet').value = item.veterinario || '';
+                form.querySelector('#procedure-notes').value = item.observacoes || '';
+                break;
+        }
+    }
+
+    // Função para definir valores padrão para novos itens
+    function setDefaultValuesForNewItem(apiEndpoint, form) {
+        const today = new Date().toISOString().split('T')[0];
+
+        switch (apiEndpoint) {
+            case 'medicamentos':
+                form.querySelector('#medication-id').value = '';
+                form.querySelector('#medication-start').value = today;
+                break;
+
+            case 'vacinas':
+                form.querySelector('#vaccine-id').value = '';
+                form.querySelector('#vaccine-application').value = today;
+                break;
+
+            case 'procedimentos':
+                form.querySelector('#procedure-id').value = '';
+                form.querySelector('#procedure-date').value = today;
+                break;
+        }
+    }
+
+    // Funções para salvar cada tipo de item
+    async function saveMedication(petId) {
+        const medicationData = {
+            nome_medicamento: document.getElementById('medication-name').value.trim(),
+            dosagem: document.getElementById('medication-dosage').value.trim(),
+            frequencia: document.getElementById('medication-frequency').value.trim(),
+            data_inicio: document.getElementById('medication-start').value,
+            data_fim: document.getElementById('medication-end').value || null,
+            observacoes: document.getElementById('medication-notes').value.trim(),
+            pet_id: petId
+        };
+
+        // Validação
+        if (!medicationData.nome_medicamento || !medicationData.dosagem ||
+            !medicationData.frequencia || !medicationData.data_inicio) {
+            alert('Por favor, preencha todos os campos obrigatórios!');
+            return false;
+        }
+
+        try {
+            const medicationId = document.getElementById('medication-id').value;
+            const method = medicationId ? 'PUT' : 'POST';
+            const url = medicationId
+                ? `http://localhost:1337/medicamentos/${medicationId}`
+                : 'http://localhost:1337/medicamentos';
+
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(medicationData)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Erro ao salvar medicamento');
+            }
+
+            return true;
+        } catch (error) {
+            console.error('Erro ao salvar medicamento:', error);
+            alert('Erro ao salvar medicamento: ' + error.message);
+            return false;
+        }
+    }
+
+    async function saveVaccine(petId) {
+        const vaccineData = {
+            nome: document.getElementById('vaccine-name').value.trim(),
+            fabricante: document.getElementById('vaccine-manufacturer').value.trim(),
+            lote: document.getElementById('vaccine-lot').value.trim(),
+            data_aplicacao: document.getElementById('vaccine-application').value,
+            prox_aplicacao: document.getElementById('vaccine-next').value || null,
+            veterinario: document.getElementById('vaccine-vet').value.trim(),
+            pet_id: petId
+        };
+
+        // Validação
+        if (!vaccineData.nome || !vaccineData.fabricante ||
+            !vaccineData.lote || !vaccineData.data_aplicacao) {
+            alert('Por favor, preencha todos os campos obrigatórios!');
+            return false;
+        }
+
+        try {
+            const vaccineId = document.getElementById('vaccine-id').value;
+            const method = vaccineId ? 'PUT' : 'POST';
+            const url = vaccineId
+                ? `http://localhost:1337/vacinas/${vaccineId}`
+                : 'http://localhost:1337/vacinas';
+
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(vaccineData)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Erro ao salvar vacina');
+            }
+
+            return true;
+        } catch (error) {
+            console.error('Erro ao salvar vacina:', error);
+            alert('Erro ao salvar vacina: ' + error.message);
+            return false;
+        }
+    }
+
+    async function saveProcedure(petId) {
+        const procedureData = {
+            tipo: document.getElementById('procedure-type').value.trim(),
+            descricao: document.getElementById('procedure-description').value.trim(),
+            data_procedimento: document.getElementById('procedure-date').value,
+            veterinario: document.getElementById('procedure-vet').value.trim(),
+            observacoes: document.getElementById('procedure-notes').value.trim(),
+            pet_id: petId
+        };
+
+        // Validação
+        if (!procedureData.tipo || !procedureData.descricao || !procedureData.data_procedimento) {
+            alert('Por favor, preencha todos os campos obrigatórios!');
+            return false;
+        }
+
+        try {
+            const procedureId = document.getElementById('procedure-id').value;
+            const method = procedureId ? 'PUT' : 'POST';
+            const url = procedureId
+                ? `http://localhost:1337/procedimentos/${procedureId}`
+                : 'http://localhost:1337/procedimentos';
+
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(procedureData)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Erro ao salvar procedimento');
+            }
+
+            return true;
+        } catch (error) {
+            console.error('Erro ao salvar procedimento:', error);
+            alert('Erro ao salvar procedimento: ' + error.message);
+            return false;
+        }
     }
 
     // Excluir item
@@ -298,6 +547,30 @@ document.addEventListener("DOMContentLoaded", function () {
         const success = await savePetData(petId);
         if (success) {
             editPetForm.hide();
+            location.reload();
+        }
+    });
+
+    document.getElementById('btn-save-medication')?.addEventListener('click', async () => {
+        const success = await saveMedication(petId);
+        if (success) {
+            bootstrap.Modal.getInstance('#medicationModal').hide();
+            location.reload();
+        }
+    });
+
+    document.getElementById('btn-save-vaccine')?.addEventListener('click', async () => {
+        const success = await saveVaccine(petId);
+        if (success) {
+            bootstrap.Modal.getInstance('#vaccineModal').hide();
+            location.reload();
+        }
+    });
+
+    document.getElementById('btn-save-procedure')?.addEventListener('click', async () => {
+        const success = await saveProcedure(petId);
+        if (success) {
+            bootstrap.Modal.getInstance('#procedureModal').hide();
             location.reload();
         }
     });
