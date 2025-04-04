@@ -574,23 +574,34 @@ const atualizarProcedimento = async (id, id_pet, nome, veterinario, data, dose, 
 /** TABELA MEDICAMENTOS */
 
 /** Cadastrar Medicamento */
-const cadastrarMedicamento = async (id_pet, nome_medicamento, dosagem, frequencia, data_inicio, data_fim) => {
+const cadastrarMedicamento = async (id_pet, nome_medicamento, dosagem, frequencia, data_inicio, data_fim = null, observacoes = null) => {
     try {
-        // Validação para garantir que todos os campos necessários estão preenchidos
-        if (!id_pet || !nome_medicamento || !dosagem || !frequencia || !data_inicio || !data_fim) {
-            throw new Error('Dados inválidos para cadastro de medicamento');
+        // Validação dos campos obrigatórios
+        if (!id_pet || !nome_medicamento?.trim() || !dosagem?.trim() || !frequencia?.trim() || !data_inicio) {
+            throw new Error('Campos obrigatórios: id_pet, nome_medicamento, dosagem, frequencia, data_inicio');
         }
 
-        // Query correta para inserir os dados na tabela `medicamentos`
-        const query = await connection.execute(
-            'INSERT INTO medicamentos (id_pet, nome_medicamento, dosagem, frequencia, data_inicio, data_fim) VALUES (?, ?, ?, ?, ?, ?);',
-            [id_pet, nome_medicamento, dosagem, frequencia, data_inicio, data_fim]
+        const [result] = await connection.execute(
+            'INSERT INTO medicamentos (id_pet, nome_medicamento, dosagem, frequencia, data_inicio, data_fim, observacoes) VALUES (?, ?, ?, ?, ?, ?, ?)',
+            [
+                id_pet,
+                nome_medicamento.trim(),
+                dosagem.trim(),
+                frequencia.trim(),
+                data_inicio,
+                data_fim || null,  // Garante null se for string vazia
+                observacoes?.trim() || null  // Trim se existir, senão null
+            ]
         );
 
-        return query;
+        return {
+            id: result.insertId,
+            success: true,
+            message: 'Medicamento cadastrado com sucesso'
+        };
     } catch (error) {
-        console.error('Erro ao cadastrar medicamento:', error);
-        throw new Error('Falha ao cadastrar medicamento');
+        console.error('Erro no model ao cadastrar medicamento:', error);
+        throw error;
     }
 };
 

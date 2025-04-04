@@ -373,49 +373,51 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Funções para salvar cada tipo de item
-    async function saveMedication(petId) {
+    async function saveMedication(petId, token) {
         const medicationData = {
             nome_medicamento: document.getElementById('medication-name').value.trim(),
             dosagem: document.getElementById('medication-dosage').value.trim(),
             frequencia: document.getElementById('medication-frequency').value.trim(),
             data_inicio: document.getElementById('medication-start').value,
             data_fim: document.getElementById('medication-end').value || null,
-            observacoes: document.getElementById('medication-notes').value.trim(),
+            observacoes: document.getElementById('medication-notes').value.trim() || null,
             pet_id: petId
         };
-
+    
         // Validação
-        if (!medicationData.nome_medicamento || !medicationData.dosagem ||
+        if (!medicationData.nome_medicamento || !medicationData.dosagem || 
             !medicationData.frequencia || !medicationData.data_inicio) {
             alert('Por favor, preencha todos os campos obrigatórios!');
             return false;
         }
-
+    
         try {
-            const medicationId = document.getElementById('medication-id').value;
-            const method = medicationId ? 'PUT' : 'POST';
-            const url = medicationId
-                ? `http://localhost:1337/medicamentos/${medicationId}`
+            const isEdit = document.getElementById('medication-id').value;
+            const url = isEdit 
+                ? `http://localhost:1337/medicamentos/${isEdit}`
                 : 'http://localhost:1337/medicamentos';
-
+            
+            const method = isEdit ? 'PUT' : 'POST';
+    
             const response = await fetch(url, {
-                method: method,
+                method,
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(medicationData)
             });
-
+    
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.message || 'Erro ao salvar medicamento');
             }
-
-            return true;
+    
+            const data = await response.json();
+            return data.success;
         } catch (error) {
             console.error('Erro ao salvar medicamento:', error);
-            alert('Erro ao salvar medicamento: ' + error.message);
+            alert('Erro: ' + error.message);
             return false;
         }
     }

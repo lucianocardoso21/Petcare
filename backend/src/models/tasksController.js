@@ -508,14 +508,35 @@ const atualizarProcedimento = async (req, res) => {
 
 const cadastrarMedicamento = async (req, res) => {
     try {
-        const { id_pet, nome_medicamento, dosagem, frequencia, data_inicio, data_fim } = req.body;
+        const { 
+            id_pet, 
+            nome_medicamento, 
+            dosagem, 
+            frequencia, 
+            data_inicio, 
+            data_fim, 
+            observacoes 
+        } = req.body;
 
-        // Chama o model passando os parâmetros corretos
-        const novoMedicamento = await tasksModels.cadastrarMedicamento(id_pet, nome_medicamento, dosagem, frequencia, data_inicio, data_fim);
-        
-        responderComSucesso(res, novoMedicamento);
+        // Validação básica no controller (opcional, pois o model já valida)
+        if (!id_pet) {
+            return responderComErro(res, 'ID do pet é obrigatório', 400);
+        }
+
+        const resultado = await tasksModels.cadastrarMedicamento(
+            id_pet,
+            nome_medicamento,
+            dosagem,
+            frequencia,
+            data_inicio,
+            data_fim,
+            observacoes
+        );
+
+        responderComSucesso(res, resultado, 201);
     } catch (error) {
-        responderComErro(res, error);
+        console.error('Erro no controller ao cadastrar medicamento:', error);
+        responderComErro(res, error.message || 'Erro ao cadastrar medicamento', 400);
     }
 };
 
