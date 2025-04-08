@@ -374,6 +374,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Funções para salvar cada tipo de item
     async function saveMedication(petId, token) {
+        // 1. Coleta e preparação dos dados
         const medicationData = {
             nome_medicamento: document.getElementById('medication-name').value.trim(),
             dosagem: document.getElementById('medication-dosage').value.trim(),
@@ -381,45 +382,146 @@ document.addEventListener("DOMContentLoaded", function () {
             data_inicio: document.getElementById('medication-start').value,
             data_fim: document.getElementById('medication-end').value || null,
             observacoes: document.getElementById('medication-notes').value.trim() || null,
-            pet_id: petId
+            id_pet: petId
         };
-    
-        // Validação
-        if (!medicationData.nome_medicamento || !medicationData.dosagem || 
-            !medicationData.frequencia || !medicationData.data_inicio) {
-            alert('Por favor, preencha todos os campos obrigatórios!');
+
+        // 2. Validação avançada dos campos
+        const validationErrors = [];
+
+        if (!medicationData.nome_medicamento) {
+            validationErrors.push('Nome do medicamento é obrigatório');
+        }
+
+        if (!medicationData.dosagem) {
+            validationErrors.push('Dosagem é obrigatória');
+        }
+
+        if (!medicationData.frequencia) {
+            validationErrors.push('Frequência é obrigatória');
+        }
+
+        if (!medicationData.data_inicio) {
+            validationErrors.push('Data de início é obrigatória');
+        } else {
+            // Validação da data (não pode ser no futuro)
+            const startDate = new Date(medicationData.data_inicio);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            if (startDate > today) {
+                validationErrors.push('Data de início não pode ser no futuro');
+            }
+
+            // Validação se data de término é anterior à data de início
+            if (medicationData.data_fim) {
+                const endDate = new Date(medicationData.data_fim);
+                if (endDate < startDate) {
+                    validationErrors.push('Data de término não pode ser anterior à data de início');
+                }
+            }
+        }
+
+        if (validationErrors.length > 0) {
+            alert('Erros de validação:\n\n' + validationErrors.join('\n'));
             return false;
         }
-    
+
+        // 3. Configuração da requisição
         try {
             const isEdit = document.getElementById('medication-id').value;
-            const url = isEdit 
-                ? `http://localhost:1337/medicamentos/${isEdit}`
-                : 'http://localhost:1337/medicamentos';
-            
-            const method = isEdit ? 'PUT' : 'POST';
-    
+            // const endpoint = isEdit ? 'atualizar' : 'cadastrar';
+            const url = isEdit
+                ? `http://localhost:1337/medicamentos/${isEdit}`  // PATCH para editar
+                : `http://localhost:1337/medicamentos`;           // POST para cadastrar
+
+            const method = isEdit ? 'PATCH' : 'POST';
+            console.log('Dados a serem enviados:', medicationData);
+
+            // 4. Execução da requisição
             const response = await fetch(url, {
                 method,
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(medicationData)
+                body: JSON.stringify(medicationData),
+                timeout: 10000 // timeout simulado
             });
-    
+
+            // 5. Tratamento da resposta
             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Erro ao salvar medicamento');
+                let errorMessage = 'Erro ao salvar medicamento';
+
+                try {
+                    const errorData = await response.json();
+                    errorMessage = errorData.message || errorMessage;
+
+                    // Tratamento específico para erros conhecidos
+                    if (response.status === 400) {
+                        errorMessage = 'Dados inválidos: ' + (errorData.errors?.join(', ') || errorMessage);
+                    } else if (response.status === 401) {
+                        errorMessage = 'Não autorizado - faça login novamente';
+                        localStorage.removeItem('authToken');
+                        window.location.href = '/login.html';
+                        return false;
+                    } else if (response.status === 404) {
+                        errorMessage = 'Recurso não encontrado';
+                    }
+                } catch (e) {
+                    console.error('Erro ao processar resposta de erro:', e);
+                }
+
+                throw new Error(errorMessage);
             }
-    
-            const data = await response.json();
-            return data.success;
+
+            // 6. Processamento da resposta de sucesso
+            const responseData = await response.json();
+
+            if (!responseData.success && responseData.message) {
+                throw new Error(responseData.message);
+            }
+
+            // 7. Feedback visual para o usuário
+            const successMessage = isEdit
+                ? 'Medicamento atualizado com sucesso!'
+                : 'Medicamento cadastrado com sucesso!';
+
+            // Usando Toast ou notificação mais amigável (opcional)
+            showNotification(successMessage, 'success');
+
+            return true;
+
         } catch (error) {
-            console.error('Erro ao salvar medicamento:', error);
-            alert('Erro: ' + error.message);
+            // 8. Tratamento de erros detalhado
+            console.error('Erro completo:', error);
+
+            let userErrorMessage = 'Erro ao salvar medicamento';
+
+            if (error.name === 'AbortError') {
+                userErrorMessage = 'Tempo de conexão esgotado. Verifique sua internet.';
+            } else if (error.message.includes('Failed to fetch')) {
+                userErrorMessage = 'Não foi possível conectar ao servidor. Verifique sua conexão.';
+            } else {
+                userErrorMessage = error.message || userErrorMessage;
+            }
+
+            showNotification(userErrorMessage, 'error');
             return false;
         }
+    }
+
+    // Função auxiliar para mostrar notificações (opcional)
+    function showNotification(message, type = 'info') {
+        // Implementação básica - pode ser substituída por uma lib como Toastify
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.textContent = message;
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+            notification.classList.add('fade-out');
+            setTimeout(() => notification.remove(), 500);
+        }, 3000);
     }
 
     async function saveVaccine(petId) {
