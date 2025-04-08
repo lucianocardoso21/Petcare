@@ -390,6 +390,32 @@ const atualizarVacina = async (req, res) => {
     }
 };
 
+const removerVacina = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        if (!id) {
+            console.warn('⚠️ ID da vacina não fornecido');
+            return res.status(400).json({ error: 'ID da vacina é obrigatório.' });
+        }
+
+        // Chama o modelo para remover a vacina
+        const resultado = await tasksModels.removerVacina(id);
+
+        if (resultado.affectedRows === 0) {
+            console.warn(`⚠️ Nenhuma vacina encontrada com o ID ${id}`);
+            return res.status(404).json({ error: 'Vacina não encontrada.' });
+        }
+
+        console.log(`✅ Vacina com ID ${id} removida com sucesso`);
+        return res.status(200).json({ success: 'Vacina removida com sucesso', result: resultado });
+    } catch (error) {
+        console.error('❌ Erro no controlador ao remover vacina:', error.message);
+        return res.status(500).json({ error: 'Erro ao remover vacina' });
+    }
+};
+
+
 /** PROCEDIMENTOS */
 const cadastrarProcedimento = async (req, res) => {
     try {
@@ -704,6 +730,7 @@ module.exports = {
     buscarVacinaId,
     listarVacinasPet,
     atualizarVacina,
+    removerVacina,
     cadastrarProcedimento,
     buscarProcedimentoId,
     listarProcedimentosPet,

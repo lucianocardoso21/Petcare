@@ -498,6 +498,31 @@ const atualizarVacina = async (id, camposAtualizados, valoresAtualizados) => {
     }
 };
 
+/** Remover Vacina */
+const removerVacina = async (id) => {
+    try {
+        if (!id) {
+            throw new Error('ID da vacina inválido');
+        }
+
+        const [resultado] = await connection.execute(
+            'DELETE FROM vacinas WHERE id = ?;',
+            [id]
+        );
+
+        if (resultado.affectedRows === 0) {
+            throw new Error('Vacina não encontrada para remoção');
+        }
+
+        console.log(`✅ Vacina com ID ${id} removida com sucesso`);
+        return resultado;
+    } catch (error) {
+        console.error('❌ Erro ao remover vacina:', error.message);
+        throw new Error('Erro ao remover vacina');
+    }
+};
+
+
 /** TABELA PROCEDIMENTOS */
 
 /** Cadastrar Procedimento */
@@ -732,6 +757,7 @@ module.exports = {
     buscarVacinaId,
     listarVacinasPet,
     atualizarVacina,
+    removerVacina,
     cadastrarProcedimento,
     buscarProcedimentoId,
     listarProcedimentosPet,
