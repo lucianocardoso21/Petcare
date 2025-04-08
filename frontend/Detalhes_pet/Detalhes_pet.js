@@ -334,6 +334,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 form.querySelector('#vaccine-name').value = item.nome || '';
                 form.querySelector('#vaccine-manufacturer').value = item.fabricante || '';
                 form.querySelector('#vaccine-lot').value = item.lote || '';
+                form.querySelector('#vaccine-validity').value = item.validade?.split('T')[0] || '';
                 form.querySelector('#vaccine-application').value = item.data_aplicacao?.split('T')[0] || '';
                 form.querySelector('#vaccine-next').value = item.prox_aplicacao?.split('T')[0] || '';
                 form.querySelector('#vaccine-vet').value = item.veterinario || '';
@@ -372,7 +373,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // Funções para salvar cada tipo de item
+    // CRUD MEDICAMENTOS
     async function saveMedication(petId, token) {
         // 1. Coleta e preparação dos dados
         const medicationData = {
@@ -524,27 +525,31 @@ document.addEventListener("DOMContentLoaded", function () {
         }, 3000);
     }
 
+    // CRUD VACINAS
     async function saveVaccine(petId) {
         const vaccineData = {
             nome: document.getElementById('vaccine-name').value.trim(),
             fabricante: document.getElementById('vaccine-manufacturer').value.trim(),
             lote: document.getElementById('vaccine-lot').value.trim(),
+            validade: document.getElementById('vaccine-validity').value,
             data_aplicacao: document.getElementById('vaccine-application').value,
             prox_aplicacao: document.getElementById('vaccine-next').value || null,
             veterinario: document.getElementById('vaccine-vet').value.trim(),
-            pet_id: petId
+            id_pet: petId
         };
 
         // Validação
         if (!vaccineData.nome || !vaccineData.fabricante ||
-            !vaccineData.lote || !vaccineData.data_aplicacao) {
+            !vaccineData.lote || !vaccineData.validade ||
+            !vaccineData.data_aplicacao || !vaccineData.prox_aplicacao ||
+            !vaccineData.veterinario) {
             alert('Por favor, preencha todos os campos obrigatórios!');
             return false;
         }
 
         try {
             const vaccineId = document.getElementById('vaccine-id').value;
-            const method = vaccineId ? 'PUT' : 'POST';
+            const method = vaccineId ? 'PATCH' : 'POST';
             const url = vaccineId
                 ? `http://localhost:1337/vacinas/${vaccineId}`
                 : 'http://localhost:1337/vacinas';
