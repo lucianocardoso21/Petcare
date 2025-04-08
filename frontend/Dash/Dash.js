@@ -95,10 +95,13 @@ document.addEventListener("DOMContentLoaded", function () {
     if (logoutBtn) {
         logoutBtn.addEventListener('click', (evt) => {
             evt.preventDefault();
-            localStorage.removeItem('authToken');
-            localStorage.removeItem('cpf');
-            localStorage.removeItem('proprietario');
-            window.location.href = '/frontend/TelaLoginHtml/Login.html';
+            const confirmLogout = confirm('Tem certeza que deseja sair?');
+            if (confirmLogout) {
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('cpf');
+                localStorage.removeItem('proprietario');
+                window.location.href = '/frontend/TelaLoginHtml/Login.html';
+            }
         })
     }
-})
+});
