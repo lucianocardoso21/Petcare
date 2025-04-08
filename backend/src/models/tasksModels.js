@@ -596,6 +596,26 @@ const atualizarProcedimento = async (id, id_pet, nome, veterinario, data, dose, 
     }
 };
 
+/** Remover Procedimento */
+const removerProcedimento = async (id) => {
+    try {
+        if (!id) {
+            throw new Error('ID inválido');
+        }
+
+        const [resultado] = await connection.execute(
+            'DELETE FROM procedimentos WHERE id = ?;',
+            [id]
+        );
+
+        return resultado;
+    } catch (error) {
+        console.error('Erro ao remover procedimento:', error);
+        throw new Error('Erro ao remover procedimento');
+    }
+};
+
+
 /** TABELA MEDICAMENTOS */
 
 /** Cadastrar Medicamento */
@@ -762,6 +782,7 @@ module.exports = {
     buscarProcedimentoId,
     listarProcedimentosPet,
     atualizarProcedimento,
+    removerProcedimento,
     cadastrarMedicamento,
     buscarMedicamentoId,
     listarMedicamentosPet,

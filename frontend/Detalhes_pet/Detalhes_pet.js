@@ -346,7 +346,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 form.querySelector('#procedure-date').value = item.data_procedimento?.split('T')[0] || '';
                 form.querySelector('#procedure-description').value = item.descricao || '';
                 form.querySelector('#procedure-vet').value = item.veterinario || '';
-                form.querySelector('#procedure-notes').value = item.observacoes || '';
                 break;
         }
     }
@@ -582,19 +581,18 @@ document.addEventListener("DOMContentLoaded", function () {
             descricao: document.getElementById('procedure-description').value.trim(),
             data_procedimento: document.getElementById('procedure-date').value,
             veterinario: document.getElementById('procedure-vet').value.trim(),
-            observacoes: document.getElementById('procedure-notes').value.trim(),
-            pet_id: petId
+            id_pet: petId
         };
 
         // Validação
-        if (!procedureData.tipo || !procedureData.descricao || !procedureData.data_procedimento) {
+        if (!procedureData.tipo || !procedureData.descricao || !procedureData.data_procedimento || !procedureData.veterinario) {
             alert('Por favor, preencha todos os campos obrigatórios!');
             return false;
         }
 
         try {
             const procedureId = document.getElementById('procedure-id').value;
-            const method = procedureId ? 'PUT' : 'POST';
+            const method = procedureId ? 'PATCH' : 'POST';
             const url = procedureId
                 ? `http://localhost:1337/procedimentos/${procedureId}`
                 : 'http://localhost:1337/procedimentos';

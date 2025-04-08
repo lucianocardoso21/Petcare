@@ -530,6 +530,28 @@ const atualizarProcedimento = async (req, res) => {
     }
 };
 
+const removerProcedimento = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        if (!id) {
+            return res.status(400).json({ error: 'ID do procedimento é obrigatório.' });
+        }
+
+        const resultado = await tasksModels.removerProcedimento(id);
+
+        if (resultado.affectedRows === 0) {
+            return res.status(404).json({ error: 'Procedimento não encontrado.' });
+        }
+
+        return res.status(200).json({ success: 'Procedimento removido com sucesso.' });
+    } catch (error) {
+        console.error('Erro ao remover procedimento:', error.message);
+        return res.status(500).json({ error: 'Erro ao remover procedimento' });
+    }
+};
+
+
 /** MEDICAMENTOS */
 
 const cadastrarMedicamento = async (req, res) => {
@@ -735,6 +757,7 @@ module.exports = {
     buscarProcedimentoId,
     listarProcedimentosPet,
     atualizarProcedimento,
+    removerProcedimento,
     cadastrarMedicamento,
     buscarMedicamentoId,
     listarMedicamentosPet,
