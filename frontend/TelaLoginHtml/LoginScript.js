@@ -125,3 +125,17 @@ function abrirCadastro() {
   window.open('../TelaCadastroHtml/Cadastro.html', '_blank', 'width=600, height=800'); // Ajuste as dimensões conforme necessário
 }
 
+// Mover com Enter entre campos
+document.getElementById("cpf").addEventListener("keydown", function (e) {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    document.getElementById("senha").focus();
+  }
+});
+
+document.getElementById("senha").addEventListener("keydown", function (e) {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    document.querySelector("#login-form button[type='submit']").click();
+  }
+});
