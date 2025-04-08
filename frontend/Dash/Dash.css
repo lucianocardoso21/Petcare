@@ -16,6 +16,7 @@ body {
     flex-direction: column;
     overflow-x: hidden;
 }
+
 .header {
     width: 100vw;
     position: fixed;
@@ -52,9 +53,9 @@ body {
     color: purple;
     padding: 10px 0 0 0;
     position: fixed; /* Sidebar fixa à esquerda */
-    top: 80px; /* Empurrar a sidebar para baixo, para não cobrir o header */
-    left: 0;
-    height: calc(100vh - 80px); /* Ajuste a altura para o restante da tela, sem cobrir o header */
+    top: 17vh; /* Empurrar a sidebar para baixo, para não cobrir o header */
+    left: 1vw;
+    height: 360px; /* Ajuste a altura para o restante da tela, sem cobrir o header */
     z-index: 999;
     box-shadow: 3px 10px 10px rgba(0, 0, 0, 0.301);
 }
