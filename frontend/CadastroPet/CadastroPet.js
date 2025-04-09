@@ -16,11 +16,11 @@ export function formularioCadastro() {
                 <div class="border p-3 rounded-lg mb-3">
                     <p class="font-semibold mb-2">Espécie:</p>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="especie" id="canino" required>
+                        <input class="form-check-input" type="radio" name="especie" id="Canino" required>
                         <label class="form-check-label" for="canino">Canino</label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="especie" id="felino" required>
+                        <input class="form-check-input" type="radio" name="especie" id="Felino" required>
                         <label class="form-check-label" for="felino">Felino</label>
                     </div>
                     <div class="form-check">
@@ -80,10 +80,10 @@ export function formularioCadastro() {
                 especie: especie,
                 raca: raca,
                 data_nasc: dataNasc,
-                peso: peso,
+                peso: parseFloat(peso),
                 cond_saude: condSaude,
-                status: 'ativo',
-                data_alteracao: new Date().toISOString()
+                // status: 'ativo',
+                // data_alteracao: new Date().toISOString()
             };
             console.log('Dados enviados para o backend:', JSON.stringify(petData)); // Verifica os dados antes de enviar
 
