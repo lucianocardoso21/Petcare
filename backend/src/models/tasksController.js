@@ -260,8 +260,11 @@ const listarPet = async (req, res) => {
 
 const alterarStatusPet = async (req, res) => {
     try {
-        const { id } = req.params; // Recebe o ID do pet
+        const { id } = req.params;
         if (!id) throw new Error('ID do pet é necessário');
+
+        // Verifica se o ID é numérico
+        if (isNaN(id)) throw new Error('ID inválido');
 
         const resultado = await tasksModels.alterarStatusPet(id);
 
@@ -269,9 +272,16 @@ const alterarStatusPet = async (req, res) => {
             return res.status(404).json({ error: 'Pet não encontrado' });
         }
 
-        return res.status(200).json({ success: 'Status do pet alterado com sucesso' });
+        return res.status(200).json({ 
+            success: true,
+            message: 'Status do pet alterado com sucesso',
+            newStatus: resultado.newStatus // Adicione isso no model
+        });
     } catch (error) {
-        return res.status(400).json({ error: error.message });
+        return res.status(400).json({ 
+            success: false,
+            error: error.message 
+        });
     }
 };
 

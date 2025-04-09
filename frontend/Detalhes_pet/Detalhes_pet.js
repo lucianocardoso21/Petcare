@@ -104,6 +104,7 @@ document.addEventListener("DOMContentLoaded", function () {
             document.getElementById('edit-birthdate').value = petData.data_nasc?.split('T')[0] || '';
             document.getElementById('edit-weight').value = petData.peso || '';
             document.getElementById('edit-health-status').value = petData.cond_saude || '';
+            document.getElementById('edit-status').checked = petData.status === 'ativo';
 
         } catch (error) {
             console.error('Erro ao carregar dados do pet:', error);
@@ -119,7 +120,7 @@ document.addEventListener("DOMContentLoaded", function () {
             raca: document.getElementById("edit-breed").value.trim(),
             data_nasc: document.getElementById("edit-birthdate").value,
             peso: document.getElementById("edit-weight").value,
-            cond_saude: document.getElementById("edit-health-status").value.trim()
+            cond_saude: document.getElementById("edit-health-status").value.trim(),
         };
 
         // Validação
@@ -147,6 +148,30 @@ document.addEventListener("DOMContentLoaded", function () {
         } catch (e) {
             console.error(e);
             alert('Erro ao salvar alterações: ' + e.message);
+            return false;
+        }
+    }
+
+    // Adicione esta nova função no seu arquivo Detalhes_pet.js
+    async function alterarStatusPet(petId) {
+        try {
+            const response = await fetch(`http://localhost:1337/pets/status/${petId}`, {
+                method: "PATCH",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Erro ao alterar status do pet');
+            }
+
+            return true;
+        } catch (e) {
+            console.error(e);
+            alert('Erro ao alterar status: ' + e.message);
             return false;
         }
     }
@@ -254,7 +279,6 @@ document.addEventListener("DOMContentLoaded", function () {
         return html;
     }
 
-    // Abrir formulário para adicionar/editar item
     // Abrir formulário para adicionar/editar item
     function openForm(item, apiEndpoint) {
         let modalId, formId, titleId;
@@ -658,6 +682,25 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
+    document.getElementById('edit-status').addEventListener('change', async (e) => {
+        const success = await alterarStatusPet(petId);
+        if (success) {
+            // Atualiza visualmente sem recarregar a página
+            const statusEl = document.getElementById('pet-status');
+            if (statusEl) {
+                const novoStatus = e.target.checked ? 'ativo' : 'inativo';
+                statusEl.textContent = novoStatus.toUpperCase();
+                statusEl.className = novoStatus === 'ativo' ? 'text-success fw-bold' : 'text-danger fw-bold';
+            }
+
+            // Mostra feedback ao usuário
+            showNotification('Status atualizado com sucesso!', 'success');
+        } else {
+            // Reverte o checkbox em caso de erro
+            e.target.checked = !e.target.checked;
+        }
+    });
+
     document.getElementById('btn-save-medication')?.addEventListener('click', async () => {
         const success = await saveMedication(petId);
         if (success) {
@@ -738,6 +781,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const statusFormatado = pet.status.toUpperCase();
                 statusEl.textContent = statusFormatado;
                 statusEl.classList.add(pet.status === 'ativo' ? 'text-success' : 'text-danger');
+                statusEl.classList.add('fw-bold');
             }
 
 

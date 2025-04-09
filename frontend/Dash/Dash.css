@@ -117,3 +117,19 @@ body {
     flex-flow: row wrap;
     gap: 1.5%;
 }
+
+.status {
+    font-weight: bold;
+    padding: 2px 5px;
+    border-radius: 3px;
+}
+
+.status.ativo {
+    color: #28a745; /* Verde */
+    background-color: rgba(40, 167, 69, 0.1); /* Verde claro de fundo */
+}
+
+.status.inativo {
+    color: #dc3545; /* Vermelho */
+    background-color: rgba(220, 53, 69, 0.1); /* Vermelho claro de fundo */
+}

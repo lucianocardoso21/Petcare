@@ -395,20 +395,17 @@ function calcularIdade(dataNasc) {
 
 const alterarStatusPet = async (id) => {
     try {
-        // Busca o status atual do pet usando o id
         const [pet] = await connection.execute('SELECT status FROM pets WHERE id = ?', [id]);
 
         if (pet.length === 0) {
             throw new Error('Pet não encontrado');
         }
 
-        // Inverte o status: se for 'ativo' vai para 'inativo' e vice-versa
         const novoStatus = pet[0].status === 'ativo' ? 'inativo' : 'ativo';
 
-        // Atualiza o status do pet
         await connection.execute('UPDATE pets SET status = ? WHERE id = ?', [novoStatus, id]);
 
-        return true;
+        return { success: true, newStatus: novoStatus }; // Retorna o novo status
     } catch (error) {
         console.error('Erro ao alterar status do pet', error);
         throw new Error('Erro ao alterar status do pet');

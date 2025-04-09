@@ -62,8 +62,8 @@ document.addEventListener("DOMContentLoaded", function () {
                         <h3>${pet.nome} ${icon}</h3>
                         <p>Espécie: ${pet.especie}</p>
                         <p>Raça: ${pet.raca}</p>
-                        <p>Idade: ${pet.idade}</p>
-                        <p>Status: ${pet.status}</p>
+                        ${pet.status.toLowerCase() === 'ativo' ? `<p>Idade: ${pet.idade}</p>` : ''}
+                        <p class="status ${pet.status.toLowerCase()}">Status: ${pet.status}</p>
                     `;
                             petCard.addEventListener('click', () => {
                                 window.open(`../Detalhes_pet/Detalhes_pet.html?id=${pet.id}`, '_blank');
