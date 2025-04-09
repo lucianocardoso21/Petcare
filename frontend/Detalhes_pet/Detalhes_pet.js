@@ -732,6 +732,14 @@ document.addEventListener("DOMContentLoaded", function () {
             setTextContent('pet-age', pet.idade);
             setTextContent('pet-weight', pet.peso);
             setTextContent('pet-health-status', pet.cond_saude, 'Não informada');
+            setTextContent('pet-status', pet.status);
+            const statusEl = document.getElementById('pet-status');
+            if (statusEl) {
+                const statusFormatado = pet.status.toUpperCase();
+                statusEl.textContent = statusFormatado;
+                statusEl.classList.add(pet.status === 'ativo' ? 'text-success' : 'text-danger');
+            }
+
 
             const updateDateElement = document.getElementById('pet-update-date');
             if (updateDateElement) {

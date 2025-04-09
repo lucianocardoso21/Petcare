@@ -70,3 +70,7 @@
 .notification-error { background-color: #dc3545; }
 .notification-info { background-color: #17a2b8; }
 .fade-out { opacity: 0; }
+
+#pet-status {
+    font-weight: bolder;
+}
