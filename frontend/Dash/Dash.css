@@ -52,10 +52,10 @@ body {
     background-color: #7cfbb4;
     color: purple;
     padding: 10px 0 0 0;
-    position: fixed; /* Sidebar fixa à esquerda */
-    top: 17vh; /* Empurrar a sidebar para baixo, para não cobrir o header */
+    position: fixed; 
+    top: 17vh; 
     left: 1vw;
-    height: 360px; /* Ajuste a altura para o restante da tela, sem cobrir o header */
+    height: 360px; 
     z-index: 999;
     box-shadow: 3px 10px 10px rgba(0, 0, 0, 0.301);
 }
@@ -83,6 +83,7 @@ body {
 .main-content {
     flex-grow: 1;
     padding-top: 5vh;
+    padding-left: 1vh;
     margin: 10vh 3vw 0 -1vw;
     overflow-x: hidden;
 }
@@ -103,6 +104,7 @@ body {
 .card:hover {
     box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
     transform: scale(1.05);
+    cursor: pointer;
 }
 
 .header img{
