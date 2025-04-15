@@ -667,7 +667,9 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Event Listeners
-    btnVoltar.addEventListener('click', () => window.close());
+    btnVoltar.addEventListener('click', () => {
+        window.location.href = '../Dash/Dash.html';
+    });
 
     btnEditarPet.addEventListener('click', async () => {
         await loadPetDataForEdit(petId);

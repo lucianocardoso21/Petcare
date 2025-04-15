@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         <p class="status ${pet.status.toLowerCase()}">Status: ${pet.status}</p>
                     `;
                             petCard.addEventListener('click', () => {
-                                window.open(`../Detalhes_pet/Detalhes_pet.html?id=${pet.id}`, '_blank');
+                                window.open(`../Detalhes_pet/Detalhes_pet.html?id=${pet.id}`, '_self');
                             });
                             petsList.appendChild(petCard);
                         });
